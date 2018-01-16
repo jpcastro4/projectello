@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="shortcut icon" href="img/favicon.ico" />
+    <title>Integração Grupo Difference</title>
+</head>
+<body>
+
+<br/>
+<center>
+
+    <img src="img/logo.png" width="459" height="120">
+<br/>
+<br/>
+    <p>Integração simples (venda direta/venda parcial/débito)</p>
+    <br/>
+    <strong>OBS:</strong><br/>
+        - Para transações de débito online SEMPRE utilizar Juros como "A vista"<br/>
+        - Este exemplo de integração é 100% funcional e está no modo Sandbox<br/>
+    <br/><br/>
+    <br/>
+<table>
+    <tr>
+        <td>Valor:</td>
+        <td><input type="text" style="width:80px;" name="txt_amount" id="txt_amount"></td>
+    </tr>
+    <tr>
+        <td>Tipo transação:</td>
+        <td>
+        <select id="txn_type">
+            <option value="sale">Venda direta</option>
+            <option value="auth">Venda parcial</option>
+            <option value="debit">Débito online</option>
+        </select>
+        </td>
+    </tr>
+    <tr>
+        <td>Juros:</td>
+        <td>
+            <select id="txn_interest">
+                <option value="1">A vista</option>
+                <option value="2">Lojista</option>
+                <option value="3">Adquirente</option>
+            </select>
+        </td>
+    </tr>
+    <tr>
+        <td>Referência:</td>
+        <td><input type="text" style="width:150px;"name="txt_reference" id="txt_reference" ></td>
+    </tr>
+    <tr>
+        <td>Nome cartão(Card holder):</td>
+        <td><input type="text" style="width:150px;"name="txt_cardHolder" id="txt_cardHolder"></td>
+    </tr>
+    <tr>
+        <td>Número cartão:</td>
+        <td><input type="text" style="width:150px;"name="txt_cardNumber" id="txt_cardNumber" ></td>
+    </tr>
+    <tr>
+        <td>Mês exp:</td>
+        <td><input type="text" style="width:40px;" maxlength="2" name="txt_cardExpMonth" id="txt_cardExpMonth"></td>
+    </tr>
+    <tr>
+        <td>Ano exp:</td>
+        <td><input type="text" style="width:60px;" maxlength="4" name="txt_cardExpYear" id="txt_cardExpYear"></td>
+    </tr>
+    <tr>
+        <td>CVV:</td>
+        <td><input type="text" style="width:50px;" maxlength="4"   name="txt_cardCvv" id="txt_cardCvv"></td>
+    </tr>
+    <tr>
+        <td>Parcelas</td>
+        <td>
+            <select id="txn_installments">
+            <option value="1">A vista</option>
+            <option value="2">2x</option>
+            <option value="3">3x</option>
+            <option value="4">4x</option>
+            <option value="5">5x</option>
+            <option value="6">6x</option>
+            <option value="7">7x</option>
+            <option value="8">8x</option>
+            <option value="9">9x</option>
+            <option value="10">10x</option>
+            <option value="11">11x</option>
+            <option value="12">12x</option>
+        </select></td>
+    </tr>
+    <tr>
+        <td>
+            <input type="button" value="Checkout" onclick="createPayment();">
+        </td>
+    </tr>
+</table>
+    <br/>
+    <br/>
+    <br/>
+    <br/>
+    <!-- RESPONSE -->
+    <div id="resp" style="display:none;background-color:#FFD1B9;">
+    </div>
+    <!-- END RESPONSE -->
+</center>
+
+
+
+</body>
+
+<!-- only for example -->
+<script src="https://api.bit.one/bitOneSupportTools/lib/jquery-2.1.1.min.js"></script>
+
+<!-- Required if use Jquery -->
+<script src="https://api.bit.one/bitOneSupportTools/lib/bitOneIntegrationLib.js"></script>
+
+<!-- only for example -->
+<script src="not_required/jquery_imput_mask.js"></script>
+
+<script>
+
+    window.onload = getReferenceNumber;
+
+    //Only for example
+    function getReferenceNumber(){
+
+        //Generate an reference number
+        var dt = new Date();
+        var reference = 'kitB1_'+ (dt.getMonth() + 1) + dt.getFullYear() + getRandomInt(1,500);
+        var reference_tag = document.getElementById("txt_reference");
+        reference_tag.value = reference;
+
+        function getRandomInt(min, max) {
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+    }
+    //
+
+    $("#txt_amount").mask("###.###.##0,00", {reverse: true});
+    //$("#txt_iataFee").mask("###.###.##0,00", {reverse: true});
+    //$("#txt_shippingFee").mask("###.###.##0,00", {reverse: true});
+
+
+    //Only for example
+    var clearFields = function(){
+
+        document.getElementById("txn_interest").value = '';
+        document.getElementById("txt_cardExpMonth").value = '';
+        document.getElementById("txt_cardExpYear").value = '';
+        document.getElementById("txt_cardCvv").value = '';
+        document.getElementById("txt_cardHolder").value = '';
+        document.getElementById("txt_cardNumber").value = '';
+
+    }
+    //
+
+    //Only for example
+    function trim(x) {
+        return x.replace(/^\s+|\s+$/gm,'');
+    }
+    //
+
+    //Only for example
+    function isEmailAddress(str) {
+        var pattern =/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+        return pattern.test(str);  // returns a boolean
+    }
+    //
+
+    //Required if the call start by lib
+
+        function createPayment(){
+
+
+        var txnAmount = document.getElementById("txt_amount").value;
+        var txnCreditHolder = document.getElementById("txt_cardHolder").value;
+        var txnType = document.getElementById("txn_type").value;
+        var txnReference = document.getElementById("txt_reference").value;
+        var txnCreditNumber = document.getElementById("txt_cardNumber").value;
+        var txnInterest = document.getElementById("txn_interest").value;
+        var txnCreditMonth = document.getElementById("txt_cardExpMonth").value;
+        var txnCreditYear = document.getElementById("txt_cardExpYear").value;
+        var txnCreditCvv = document.getElementById("txt_cardCvv").value;
+        var txnCreditInstallments = document.getElementById("txn_installments").value;
+        //Taxa de embarque
+        //var txnIataFee = document.getElementById("txt_iataFee").value;
+        //Taxa de entrega
+        //var txnShippingFee = document.getElementById("txt_shippingFee").value;
+
+        if(!trim(txnAmount)){
+            alert('Valor é obrigatório');
+            return;
+        }
+
+        if(!trim(txnCreditMonth)){
+            alert('Mês expiração obrigatório');
+            return;
+        }
+
+        if(!trim(txnCreditYear)){
+            alert('Ano expiração  obrigatório');
+            return;
+        }
+
+        if(!trim(txnCreditNumber)){
+            alert('Cartão  obrigatório');
+            return;
+        }
+
+        if(!trim(txnReference)){
+            alert('Referência obrigatória');
+            return;
+        }
+
+        var payment = {
+            b1_mid:'19',
+            b1_key:'LLz/c00AOLaFGCXGQ0tnHnV2Bv5Mbolq+EHDvxjqWMo=',
+            b1_referenceTag:txnReference,
+            b1_chargeInterest:txnInterest,
+            b1_transactionType:txnType,
+            b1_processor:'3',
+            b1_orign:'KIT',
+            b1_totalAmount:txnAmount.replace(/,/g, '.'),
+            b1_currency:'BRL',
+            b1_shippingAmount:'',//txnShippingFee.replace(/,/g, '.'),
+            b1_iataFee:'',//txnIataFee.replace(/,/g, '.'),
+            b1_creditClientName:txnCreditHolder,
+            b1_creditNumber:txnCreditNumber,
+            b1_creditExpirationMonth:txnCreditMonth,
+            b1_creditExpirationYear:txnCreditYear,
+            b1_creditCvv:txnCreditCvv,
+            b1_creditInstallments:txnCreditInstallments,
+        }
+		
+        if(txnType == 'debit'){
+            doDebitPayment(payment);
+        }else{
+            doCreditPayment(payment);
+        }
+
+	
+    }
+
+    function doDebitPayment(request){
+
+        var strHtml = '';
+
+        debitTransaction(request,function(response){
+
+            if(response.success){
+
+                strHtml = '';
+
+                strHtml += '<table>';
+                strHtml += '<tr>';
+                    strHtml += '<td>';
+                      strHtml +=	 '<strong>Finalizar transação de débito</strong>';
+                    strHtml += '</td>';
+                strHtml += '</tr>';
+                strHtml += '<tr>';
+                    strHtml += '<td>';
+                        strHtml += 	'<iframe class="embed-responsive-item" src="'+ response.urlDebitResponse +'" width="640" height="480"></iframe>';
+                    strHtml += '</td>';
+                strHtml += '</tr>';
+                strHtml += '</table>';
+
+                clearFields();
+
+                $('#resp').html(strHtml).show();
+
+
+            }else{
+
+                var respMessage = '';
+
+                if(!response.errorMessage){
+                    respMessage = response.responseMessage;
+                }else{
+                    respMessage = response.errorMessage;
+                }
+
+                strHtml += '<table>';
+                strHtml += '<tr>';
+                strHtml += '<td>';
+                strHtml +=	 '<strong>Error</strong>';
+                strHtml += '</td>';
+                strHtml += '</tr>';
+                strHtml += '<tr>';
+                strHtml += '<td>';
+                strHtml +=   '<p class="text-danger">'+ respMessage +'</p>';
+                strHtml += '</td>';
+                strHtml += '</tr>';
+                strHtml += '</table>';;
+
+                clearFields();
+
+                $('#resp').html(strHtml).show();
+
+            }
+
+        });
+
+    }
+
+
+    function doCreditPayment(request){
+
+        creditTransaction(request,function(response){
+
+            if(response.success){
+
+                strHtml = '';
+
+                strHtml += '<table>';
+
+                    strHtml += '<tr>';
+                        strHtml += '<td><strong>Id da transação:</strong></td>';
+                        strHtml += '<td>'+ response.transactionId +'</td>';
+                    strHtml += '</tr>';
+
+                    strHtml += '<tr>';
+                        strHtml += '<td><strong>Nº de ordem:</strong></td>';
+                        strHtml += '<td>'+ response.orderID +'</td>';
+                    strHtml += '</tr>';
+
+                    strHtml += '<tr>';
+                        strHtml += '<td><strong>Resposta api:</strong></td>';
+                        strHtml += '<td>'+ response.responseMessage +'</td>';
+                    strHtml += '</tr>';
+
+                    strHtml += '<tr>';
+                        strHtml += '<td><strong>Cod autorização:</strong></td>';
+                        strHtml += '<td>'+ response.authCode +'</td>';
+                    strHtml += '</tr>';
+
+                    strHtml += '<tr>';
+                        strHtml += '<td><strong>Referência:</strong></td>';
+                        strHtml += '<td>'+ response.referenceTag +'</td>';
+                    strHtml += '</tr>';
+
+                strHtml += '</table>';
+
+                clearFields();
+
+                $('#resp').html(strHtml).show();
+
+            }else{
+
+                strHtml = '';
+
+                if(response.authCode){
+
+                    strHtml += '<table>';
+                        strHtml += '<tr>';
+                            strHtml += '<td><strong>Id da transação:</strong></td>';
+                            strHtml += '<td>'+ response.transactionId +'</td>';
+                        strHtml += '</tr>';
+
+                        strHtml += '<tr>';
+                            strHtml += '<td><strong>Nº de ordem:</strong></td>';
+                            strHtml += '<td>'+ response.orderID +'</td>';
+                        strHtml += '</tr>';
+
+                        strHtml += '<tr>';
+                            strHtml += '<td><strong>Resposta api:</strong></td>';
+                            strHtml += '<td>'+ response.responseMessage +'</td>';
+                        strHtml += '</tr>';
+                    strHtml += '</table>';
+
+                }else{
+
+                    var respMessage = '';
+
+                    if(!response.errorMessage){
+                        respMessage = response.responseMessage;
+                    }else{
+                        respMessage = response.errorMessage;
+                    }
+
+                    strHtml += '<table>';
+                        strHtml += '<tr>';
+                             strHtml += '<td><strong>Error:</strong></td>';
+                             strHtml += '<td>'+ respMessage +'</td>';
+                        strHtml += '</tr>';
+                    strHtml += '</table>';
+
+                }
+                clearFields();
+                $('#resp').html(strHtml).show();
+            }
+        });
+    }
+
+</script>
+
+
+</html>
