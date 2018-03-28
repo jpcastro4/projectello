@@ -53,39 +53,11 @@ $route['default_controller'] = "index";
 $route['404_override'] = '';
 // $route['translate_uri_dashes'] = FALSE;
 
-$route['politicas'] = 'index/politicas';
 
-$route['ativacao/(:num)'] = 'index/ativacao/$1';
-$route['valida/(:any)'] = 'index/valida/$1';
-
-$route['cadastrar'] = 'painel/cadastrar';
-
-$route['amigo/(:any)'] = 'painel/amigo/$1';
-$route['linkunico/amigo/(:any)'] = 'painel/linkunico/$1';
-
-$route['manutencao'] = 'index/manutencao';
-$route['comprovante'] = 'painel/painel/enviarComprovante';
-
-$route['lista'] = 'index/lista';
-$route['desatualizados'] = 'index/listadesatualizados';
-
-$route['aptos'] = 'index/aptos';
-$route['totais'] = 'index/totais';
-$route['doacoes'] = 'index/doacoes';
-$route['rede'] = 'index/rede';
-
-$route['login'] = 'index/login';
-$route['esqueci'] = 'index/esqueci';
-$route['sair'] = 'index/sair';
-
-$route['boadmin/usuario/editar/(:num)'] = 'boadmin/editar_usuario/$1';
-
-$route['boadmin/emails/novo'] = 'boadmin/novo_email';
-$route['boadmin/emails/editar/(:num)'] = 'boadmin/editar_email/$1';
-$route['boadmin/emails/visualizar/(:num)'] = 'boadmin/visualizar_email/$1';
-
-$route['painel/publicador/novo'] = 'painel/publicador_novo';
-
+//REMOTE SALES
+$route['api/rs/clientes'] = 'api/rs/index/clientes';
+$route['api/rs/produtos'] = 'api/rs/index/produtos';
+$route['api/rs/empresas'] = 'api/rs/index/empresas';
 
 
 //API

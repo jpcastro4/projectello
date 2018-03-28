@@ -101,7 +101,7 @@ if( $_SERVER['HTTP_HOST'] == 'localhost'){
 	$db['default']['hostname'] = 'localhost';
 	$db['default']['username'] = 'root'; 
 	$db['default']['password'] = ''; 
-	$db['default']['database'] = 'nowx_principal';
+	$db['default']['database'] = 'remotesales';
 }else{
 	$db['default']['hostname'] = 'localhost';//'grupoelloinvestimentos.com.mysql';
 	$db['default']['username'] = 'nowx_user';//'grupoelloinvestimentos_com';'grupoellouser';
