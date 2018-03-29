@@ -58,6 +58,6 @@ $route['404_override'] = '';
 $route['api/rs/clientes'] = 'api/rs/index/clientes';
 $route['api/rs/produtos'] = 'api/rs/index/produtos';
 $route['api/rs/empresas'] = 'api/rs/index/empresas';
-
+$route['api/rs/pedidos'] = 'api/rs/index/pedidos';
 
 //API

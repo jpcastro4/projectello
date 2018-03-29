@@ -3,17 +3,11 @@ var site = 'http://localhost/ellobeta/api/rs/'
 var app = {
 
     initialize: function(){
-
+        $.fn.dataTable.ext.errMode = 'throw';
         localStorage.setItem('empresaId',1)
+
+        this.initPages()
         
-        if ($('.page#empresa').is(':visible') ){
-            this.pageEmpresa()
-        }
-
-        if ($('.page#produtos').is(':visible')) {
-            this.pageProdutos()
-        }
-
         $('#save-prod').on('click', function (e) {
             e.preventDefault()
             app.prodInsert()
@@ -29,16 +23,33 @@ var app = {
             $(this).css('border-color','rgba(0,0,0,.15)')
         })
     },
-    
+    initPages: function(){
+
+        if ($('.page#empresa').is(':visible')) {
+            this.pageEmpresa()
+        }
+
+        if ($('.page#produtos').is(':visible')) {
+
+            this.pageProdutos()
+        }
+
+        if ($('.page#pedidos').is(':visible')) {
+            this.pagePedidos()
+        }
+
+        if ($('.page#pedido').is(':visible')) {
+            this.pagePedido()
+        }
+    },
     openPage: function(pageId){
         
         $('body').find('.page').each(function(){
             $(this).removeClass('active-page')
         })
-
-        console.log(pageId)
-
         $('#' + pageId).addClass('active-page')
+
+        this.initPages()
     },
     ajax:  function (type, action, data, callback) {
 
@@ -112,15 +123,13 @@ var app = {
                 dataSrc: 'data',
                 type: "GET",
             },
+            
             columnDefs: [{
                 orderable: false,
                 className: 'select-checkbox',
                 targets: 0
             }],
-            select: {
-                style: 'os',
-                selector: 'td:first-child'
-            },
+            select: true,
             rowId: 'prodId',
             columns: [
                 { data: "prodId" },
@@ -130,20 +139,6 @@ var app = {
                 { data: "prodPreco" },
                 { data: "prodCateg" }
             ]
-            // buttons: [
-            //     {
-            //         text: 'Select all',
-            //         action: function () {
-            //             table.rows().select();
-            //         }
-            //     },
-            //     {
-            //         text: 'Select none',
-            //         action: function () {
-            //             table.rows().deselect();
-            //         }
-            //     }
-            // ]
         })
     },
     prodInsert: function () {
@@ -224,7 +219,110 @@ var app = {
             console.log(rs)
         })
     },
+    pagePedidos: function(){
+        
+        $('#table-pedidos').DataTable({
+            ajax: {
+                url: site + 'pedidos',
+                dataSrc: 'data',
+                type: "GET",
+            },
+            // columnDefs: [{
+            //     orderable: false,
+            //     className: 'select-checkbox',
+            //     targets: 0
+            // }],
+            // select: {
+            //     style: 'os',
+            //     selector: 'td:first-child'
+            // },
+            // rowId: 'pedidoId',
+            columns: [
+                null,
+                { data: "pedidoId" },
+                { data: "clienteNomeRazao" },
+                { data: "pedidoTotal" },
+                { data: "pedidoData" }
+            ]
+        })
 
+        $('.loading').hide()
+    },
+    pagePedido: function (pedidoId=null) {
+
+        if(pedidoId != null){
+           
+            $('#table-pedido-produtos').DataTable({
+                ajax: {
+                    url: site + 'pedidos?pedidoId=' + pedidoId,
+                    dataSrc: 'data',
+                    type: "GET",
+                },
+                
+                columns: [
+                    null,
+                    { data: "pedProdId" },
+                    { data: "produtoNome" },
+                    { data: "pedProdPreco" },
+                    { data: "pedProdQtd" },
+                    { data: "pedProdSub" },
+                ]
+            })
+                        
+
+        }else{
+
+            app.ajax('GET','clientes?empresaId='+localStorage.getItem('empresaId'),'',function(res){
+
+                if(res.error){
+
+                    console.log(res)
+
+                    $('#busca-cliente').find('select#clientes-lista').append('<option selected >' + res.data.responseJSON.message + '</option>')
+                    
+                }else{
+                    res.forEach(function (k, i) {
+
+                        $('#busca-cliente').find('select#clientes-lista').append('<option value="' + i.clienteId + '" >' + i.clienteNomeRazao + '</option>')
+                    })
+                }                
+            })
+            
+            $('#lista-busca-produtos').DataTable({
+                ajax: {
+                    url: site + 'produtos',
+                    dataSrc: 'data',
+                    type: "GET",
+                },
+
+                columnDefs: [{
+                    orderable: false,
+                    className: 'select-checkbox',
+                    targets: 0
+                }],
+                select: true,
+                rowId: 'prodId',
+                columns: [
+                    { data: "prodId" },
+                    { data: "prodCod" },
+                    { data: "prodEAN" },
+                    { data: "prodNome" },
+                    { data: "prodPreco" },
+                    { data: "prodCateg" }
+                ]
+            })
+
+            $('.loading').hide()
+        }
+
+         
+
+        
+    },
+    pedidoInsert: function(){
+
+        
+    },
     
 
     empresaInsert: function () {

@@ -132,6 +132,39 @@ class Index extends REST_Controller{
         }
     }
 
+    public function clientes_get(){
+
+        if($this->input->get('empresaId')){
+
+            // echo json_encode($this->input->get('empresaId'));
+            // return;
+  
+            $this->db->where('empresaId',$this->input->get('empresaId'));
+            $result = $this->db->get('clientes');
+
+            if($result->num_rows() > 0 ){
+             
+                $this->response($result->result() , 200);
+
+            }else{
+
+                $this->response( [
+                    'status' => FALSE,
+                    'message' => 'Não existem clientes'
+                ], 400);
+            }
+
+        }else{
+
+            $this->response( [
+                'status' => FALSE,
+                'message' => 'Especifique a empresa'
+            ], 400);
+
+        }
+    }
+
+
     public function clientes_post(){
 
         if($this->input->post('clienteId')){
@@ -226,7 +259,7 @@ class Index extends REST_Controller{
                 $this->response( [
                     'status' => FALSE,
                     'message' => 'Não existem produtos'
-                ], 404);
+                ], 204);
             }
 
         }
@@ -327,22 +360,73 @@ class Index extends REST_Controller{
         }
     }
 
-    public function pedidos_post(){
+    public function pedidos_get(){
 
-        if($this->input->get('clienteId')){
+        if($this->input->get('pedidoId')){
 
-            if(!$this->input->get('clienteNomeRazao') ){
+            $this->db->where('pedidoId',$this->input->get('pedidoId'));
+            $this->db->join('clientes as c', 'c.clienteId = pedidos.clienteId');
+            $pedido = $this->db->get('pedidos');
+
+            if($pedido->num_rows() > 0 ){
+
+                $this->db->where('pedidoId',$this->input->get('pedidoId'));
+                $this->db->join('produtos as p','p.produtoId = pp.produtoId');
+                $produtos = $this->db->get('pedidosprodutos as pp');
+                                   
+                $result['pedido'] = $pedido->row();
+                $result['produtos'] = $produtos->result();
+
+                $this->response(array('Result'=>'OK','data'=>$result), 200);
+
+            }else{
+
                 $this->response( [
                     'status' => FALSE,
-                    'message' => 'Especifique ao menos o nome do cliente'
-                ], 404);
+                    'message' => 'Pedido inexistente'
+                ], 204);
             }
 
-            $this->db->where('clienteId',$this->input->get('clienteId'));
-            $update = $this->db->update('clientes', array(
-                'clienteNomeRazao'=>$this->input->get('clienteNomeRazao'),
-                'clienteTelefone'=>$this->input->get('clienteTelefone'),
-                'clienteEmail'=>$this->input->get('clienteEmail')
+        }else{
+
+            $this->db->select('pedidoId,pedidoData,pedidoTotal,pedidoStatus,p.clienteId,clienteNomeRazao,clienteTelefone,clienteCpfCnpj');
+            $this->db->join('clientes as c','c.clienteId = p.clienteId');
+            $this->db->from('pedidos as p');
+            $result = $this->db->get();
+
+            if($result->num_rows() > 0 ){
+                   
+                $this->response(array('Result'=>'OK','data'=>$result->result()), 200);
+
+            }else{
+
+                $this->response( [
+                    'status' => FALSE,
+                    'error' => 'Não existem pedidos',
+                    'data'=> array()
+                ], 200);
+            }
+
+        }
+    }
+
+    public function pedidos_post(){
+
+        if($this->input->get('pedidoId')){
+
+            if( empty( $this->input->post('clienteId') ) ){
+                $this->response( [
+                    'status' => FALSE,
+                    'message' => 'Defina um cliente'
+                ], 400);
+            }
+
+            $this->db->where('pedidoId',$this->input->get('pedidoId'));
+            $update = $this->db->update('pedidos', array(
+                'clienteId'=>$this->input->post('clienteId'),
+                'pedidoData'=>$this->input->post('pedidoData'),
+                'pedidoStatus'=>$this->input->post('pedidoStatus'),
+                'pedidoTotal'=>$this->input->post('pedidoTotal')
             ));
 
             if($update){
@@ -357,35 +441,34 @@ class Index extends REST_Controller{
                 ], 404);
             }
 
-
-
         }else{
 
-            if(!$this->input->get('clienteNomeRazao') ){
+            if( empty( $this->input->post('clienteId') ) ){
                 $this->response( [
                     'status' => FALSE,
-                    'message' => 'Especifique ao menos o nome do cliente'
-                ], 404);
+                    'message' => 'Defina um cliente'
+                ], 400);
             }
 
-            $insert = $this->db->insert('clientes', array(
-                'clienteNomeRazao'=>$this->input->get('clienteNomeRazao'),
-                'clienteTelefone'=>$this->input->get('clienteTelefone'),
-                'clienteEmail'=>$this->input->get('clienteEmail')
+            $insert = $this->db->insert('pedidos', array(
+                'clienteId'=>$this->input->post('clienteId'),
+                'pedidoData'=>$this->input->post('pedidoData'),
+                'pedidoStatus'=>$this->input->post('pedidoStatus'),
+                'pedidoTotal'=>$this->input->post('pedidoTotal'),
+                'empresaId'=>$this->input->post('empresaId')
             ));
 
             if($insert){
                 $this->response( [
                     'status' => TRUE,
-                    'message' => 'Cliente alterado'
+                    'message' => 'Pedido gravado'
                 ], 200);
             }else{
                 $this->response( [
                     'status' => FALSE,
-                    'message' => 'Erro na alteração'
+                    'message' => 'Erro na gravação'
                 ], 404);
             }
-
         }
     }
 
