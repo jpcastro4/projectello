@@ -348,43 +348,36 @@
             </div>
 
             <div class="container page active-page" id="pedido" >
+                <form id="pedido-cliente">
                 <div class="row pt-4">
                     <div class="col-12 py-3">
-                        <h2>Novo Pedido</h2>
+                        <h2 id="num-pedido" >Novo Pedido</h2>
                     </div>
                     <div class="col-12">
                         <div class="contain-card p-4">
                             <div class="row">
-                                <div class="col col-12 text-right">
-                                    <button class="btn btn-success" data-toggle="modal" data-target="#busca-cliente">Buscar cliente</button>
+                                <div class="col col-3 text-right py-4">
+                                    <span class="btn btn-success" data-toggle="modal" data-target="#busca-cliente">Buscar cliente</span>
+                                    <span class="btn btn-warning" data-toggle="modal" data-target="#modal-novo-cliente">Novo cliente</span>
+                                </div>
+                                <div class="col col-9">
+                                    <div class="form-group col-2">
+                                        <label class="label">Cód Cliente</label>
+                                        <input class="form-control" type="text" readonly name="clienteId">
+                                    </div>
+                                    <div class="form-group col-6">
+                                        <label class="label">Nome ou Razão Social</label>
+                                        <input class="form-control" type="text" readonly name="clienteNomeRazao">
+                                    </div>
+                                
+                                    <!-- <div class="form-group col-3">
+                                        <label class="label">Status Pedido</label>
+                                        <input class="form-control" type="text" name="pedidoStatus">
+                                    </div> -->
                                 </div>
                             
                             </div>
-                            <form class="row" id="pedido-cliente">
-                                <div class="form-group col-6">
-                                    <label class="label">Nome ou Razão Social</label>
-                                    <input class="form-control" type="text" name="clienteNomeRazao"> 
-                                </div>
-                                <div class="form-group col-3">
-                                    <label class="label">Telefone </label>
-                                    <input class="form-control" type="text" name="clienteTelefone">
-                                </div>
-                                <div class="form-group col-3">
-                                    <label class="label">Responsavel </label>
-                                    <input class="form-control" type="text" name="clienteContato">
-                                </div>
-                                <div class="form-group col-3">
-                                    <label class="label">CPF/CNPJ </label>
-                                    <input class="form-control" type="text" name="clienteCpfCnpj">
-                                </div>
-
-                                <div class="form-group col-3">
-                                    <label class="label">Status Pedido</label>
-                                    <input class="form-control" type="text" name="pedidoStatus">
-                                </div>
-                            </form>
-                            
-                            
+                                                       
                         </div>
                     </div>
 
@@ -394,15 +387,14 @@
                         <div class="contain-card p-4">
                             <div class="row">
                                 <div class="form-group col-12 text-right">
-                                    <button class="btn btn-success" data-toggle="modal" data-target="#busca-produtos">Adicionar produto</button>
+                                    <span class="btn btn-success" data-toggle="modal" data-target="#busca-produtos">Adicionar produto</span>
                                 </div>
                             </div>
 
                             <div class="container-card py-4" >
                                 <table id="table-pedido-produtos" class="table">
                                     <thead>
-                                        <tr>   
-
+                                        <tr>
                                             <th>ID</th>
                                             <th>Nome</th>
                                             <th>Preco</th>
@@ -410,7 +402,9 @@
                                             <th>Subtotal</th>
                                         </tr>
                                     </thead>
-                                     
+                                    <tbody>
+                                        
+                                    </tbody>
                                 </table>
                             </div>
                         </div>
@@ -423,11 +417,12 @@
                             <h1 id="total">R$2000,00</h1>
                         </div>
                         <div class="contain-card p-4 mt-5">
-                            <button class="btn w-100 btn-success" data-toggle="modal" data-target="#busca-cliente">Salvar Pedido</button>
+                            <button class="btn w-100 btn-success">Salvar Pedido</button>
                         </div>
                     </div>
-                     
+                    
                 </div>
+                </form>
             </div>
             
             
@@ -435,7 +430,7 @@
 
 
         <!-- MODAL DESMEMBRADO SALVA PESQUISA -->
-        <div class="modal fade" id="busca-cliente" tabindex="-1" role="dialog" aria-labelledby="novoPequisa" aria-hidden="true">
+        <div class="modal fade" id="busca-cliente" tabindex="-1" role="dialog" aria-labelledby="busca-cliente" aria-hidden="true">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
         
@@ -455,7 +450,8 @@
                         </fieldset>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" id="novapesquisa" class="btn btn-theme">Selecionar</button>
+                        <button class="btn btn-success" data-toggle="modal" data-target="#modal-novo-cliente">Novo cliente</button>
+                        <button type="button" id="seleciona-cliente" class="btn btn-theme">Selecionar</button>
                         <button type="button" class="btn btn-link" data-dismiss="modal">Cancelar</button>
                     </div>
         
@@ -463,18 +459,63 @@
             </div>
         </div>
 
-        <div class="modal fade" id="busca-produtos" tabindex="-1" role="dialog" aria-labelledby="novoPequisa" aria-hidden="true">
+        <div class="modal fade" id="modal-novo-cliente" tabindex="-1" role="dialog" aria-labelledby="modal-novo-cliente" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+        
+                    <div class="modal-header">
+                        <h5 class="modal-title pull-left">Novo cliente </h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+
+                    <div class="modal-body">
+                        <form class="row" id="novo-cliente" action="clientes" method="POST">
+                            <div class="form-group col-12">
+                                <label class="label">Nome ou Razão Social</label>
+                                <input class="form-control" type="text" name="clienteNomeRazao" required >
+                            </div>
+                            <div class="form-group col-6">
+                                <label class="label">CPF/CNPJ </label>
+                                <input class="form-control" type="text" name="clienteCpfCnpj">
+                            </div>
+                            <div class="form-group col-6">
+                                <label class="label">Telefone </label>
+                                <input class="form-control" type="text" name="clienteTelefone" required >
+                            </div>
+                            <div class="form-group col-6">
+                                <label class="label">Responsavel </label>
+                                <input class="form-control" type="text" name="clienteContato">
+                            </div>
+                            <div class="form-group col-6">
+                                <label class="label">E-mail </label>
+                                <input class="form-control" type="text" name="clienteEmail">
+                            </div>
+                            
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" id="novapesquisa" class="btn btn-theme" onclick="app.novoCliente()">Salvar</button>
+                        <button type="button" class="btn btn-link" data-dismiss="modal">Cancelar</button>
+                    </div>
+        
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="busca-produtos" tabindex="-1" role="dialog" aria-labelledby="busca-produtos" aria-hidden="true">
             <div class="modal-dialog modal-lg" role="document">
                 <div class="modal-content">
         
                     <div class="modal-header">
-                        <h5 class="modal-title pull-left">Busca cliente </h5>
+                        <h5 class="modal-title pull-left">Lista de produtos</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
                     <div class="modal-body" >
-                        <table id="lista-busca-produtos" class="table table-striped table-hover">
+                        <table id="lista-busca-produtos" class="table table-striped table-hover w-100">
                             <thead>
                                 <tr>
                                     <th></th>

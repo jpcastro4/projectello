@@ -14,13 +14,20 @@ var app = {
         })
 
         $('button#save-empresa').on('click', function (e) {
-           
             e.preventDefault()
             app.empresaInsert()
         })
 
         $('input.required').on('keyup', function(){
             $(this).css('border-color','rgba(0,0,0,.15)')
+        })
+
+        $('.modal#busca-cliente').on('show.bs.modal', function(e){
+            app.buscaClientes()
+        })
+
+        $('.modal#busca-produtos').on('show.bs.modal', function (e) {
+            
         })
     },
     initPages: function(){
@@ -84,20 +91,33 @@ var app = {
                         }
                     })
                 })
-
-                // var empresa = new Vue({
-                //     el: '#empresa',
-                //     data: {
-                //         empresaNome: i.empresaNome,
-                //         empresaCnpj: i.empresaCnpj,
-                //         empresaTelefone: i.empresaTelefone,
-                //         empresaId: i.empresaId
-                //     }
-                // })
             }
             
         })
     },
+    empresaInsert: function () {
+
+        var form = $('form#empresa-insert'), action = form.attr('action'), data = form.serialize(), save = true
+
+        form.find('input').each(function () {
+
+            if ($(this).attr('required') && $(this).val() == '') {
+                $(this).css('border-color', 'red').addClass('required')
+                save = false
+            } else {
+                $(this).css('border-color', 'rgba(0,0,0,.15)').removeClass('required')
+            }
+        })
+
+        if (save) {
+            this.ajax('post', action, data, function (res) {
+                //console.log(res)
+                location.reload()
+            })
+        }
+    },
+
+    //AREA DE PRODUTOS
     pageProdutos: function(){
 
         $('.loading').show()
@@ -203,22 +223,48 @@ var app = {
         })
         
     },
-    listaClientes: function(){
-        
-        this.ajax('get','clientes',null,function(rs){
+    listaClientes: function () {
+
+        this.ajax('get', 'clientes', null, function (rs) {
             console.log(rs)
         })
     },
-
-    novoCliente: function(){
+    
+    novoCliente: function(){       
         
-        var action = $('fomr#cliente').attr('action'), data = $('fomr#cliente').serialize()
+        var form = $('form#novo-cliente'), action = form.attr('action'), data = form.serialize(), save = true
+        
+        form.find('input').each(function () {
 
-        this.ajax('post',action,data, function(rs){
-            
-            console.log(rs)
+            if ($(this).attr('required') && $(this).val() == '') {
+                $(this).css('border-color', 'red').addClass('required')
+                save = false
+            } else {
+                $(this).css('border-color', 'rgba(0,0,0,.15)').removeClass('required')
+            }
         })
+
+        if (save) {
+
+            this.ajax('POST', action+'?empresaId='+localStorage.getItem('empresaId'), data, function (rs) {
+
+                if(rs.error){
+                    console.log(rs.data.responsJSON)
+                }else{
+                    console.log(rs.message)
+                    $('#modal-novo-cliente').modal('hide')
+                    app.buscaClientes()
+                }
+            })
+
+        } else {
+            $('.loading').hide()
+        }   
     },
+
+    //AREA DE PEDIDOS
+
+    
     pagePedidos: function(){
         
         $('#table-pedidos').DataTable({
@@ -248,104 +294,163 @@ var app = {
 
         $('.loading').hide()
     },
-    pagePedido: function (pedidoId=null) {
+    novoPedido: function (clienteId) {
 
-        if(pedidoId != null){
-           
-            $('#table-pedido-produtos').DataTable({
-                ajax: {
-                    url: site + 'pedidos?pedidoId=' + pedidoId,
-                    dataSrc: 'data',
-                    type: "GET",
-                },
-                
-                columns: [
-                    null,
-                    { data: "pedProdId" },
-                    { data: "produtoNome" },
-                    { data: "pedProdPreco" },
-                    { data: "pedProdQtd" },
-                    { data: "pedProdSub" },
-                ]
-            })
-                        
+        app.ajax('POST', 'pedidos?empresaId=' + localStorage.getItem('empresaId'), { clienteId: clienteId }, function (res) {
 
-        }else{
-
-            app.ajax('GET','clientes?empresaId='+localStorage.getItem('empresaId'),'',function(res){
-
-                if(res.error){
-
-                    console.log(res)
-
-                    $('#busca-cliente').find('select#clientes-lista').append('<option selected >' + res.data.responseJSON.message + '</option>')
-                    
-                }else{
-                    res.forEach(function (k, i) {
-
-                        $('#busca-cliente').find('select#clientes-lista').append('<option value="' + i.clienteId + '" >' + i.clienteNomeRazao + '</option>')
-                    })
-                }                
-            })
-            
-            $('#lista-busca-produtos').DataTable({
-                ajax: {
-                    url: site + 'produtos',
-                    dataSrc: 'data',
-                    type: "GET",
-                },
-
-                columnDefs: [{
-                    orderable: false,
-                    className: 'select-checkbox',
-                    targets: 0
-                }],
-                select: true,
-                rowId: 'prodId',
-                columns: [
-                    { data: "prodId" },
-                    { data: "prodCod" },
-                    { data: "prodEAN" },
-                    { data: "prodNome" },
-                    { data: "prodPreco" },
-                    { data: "prodCateg" }
-                ]
-            })
-
-            $('.loading').hide()
-        }
-
-         
-
-        
-    },
-    pedidoInsert: function(){
-
-        
-    },
-    
-
-    empresaInsert: function () {
-
-        var form = $('form#empresa-insert'), action = form.attr('action'), data = form.serialize(), save = true
-
-        form.find('input').each(function () {
-
-            if ($(this).attr('required') && $(this).val() == '') {
-                $(this).css('border-color', 'red').addClass('required')
-                save = false
+            if (res.error) {
+                console.log(res.data.responseJSON.message)
             } else {
-                $(this).css('border-color', 'rgba(0,0,0,.15)').removeClass('required')
+                console.log("Pedido aberto")
+                localStorage.setItem('pedidoId', res.pedidoId)
+                $('#num-pedido').html('Pedido n° ' + res.pedidoId)
+                $('#pedido-cliente').append('<input name="pedidoId" type="hidden" value="' + res.pedidoId + '"')
             }
         })
 
-        if (save) {
-            this.ajax('post', action, data, function (res) {
-                //console.log(res)
-                location.reload()
+    },
+
+    // PEDIDO 
+
+    
+    buscaClientes: function () {
+        $('#busca-cliente').find('select#clientes-lista').html('')
+
+        app.ajax('GET', 'clientes?empresaId=' + localStorage.getItem('empresaId'), '', function (res) {
+
+            if (res.error) {
+                $('#busca-cliente').find('select#clientes-lista').append('<option selected >' + res.data.responseJSON.message + '</option>')
+
+            } else {
+                res.forEach(function (k, i) {
+                    $('#busca-cliente').find('select#clientes-lista').append('<option value="' + k.clienteId + '" >' + k.clienteNomeRazao + '</option>')
+                })
+            }
+        })
+
+        $('#seleciona-cliente').on('click', function () {
+
+            var cliente = $(this).parents('#busca-cliente').find('select option:selected')
+
+            $('#pedido').find('input').each(function (k, i) {
+
+                if ($(this).attr('name') == 'clienteId') {
+                    $(this).val(cliente.val())
+                }
+
+                if ($(this).attr('name') == 'clienteNomeRazao') {
+
+                    $(this).val(cliente.text())
+                }
+            })
+            
+            $('#busca-cliente').modal('hide')
+            //app.novoPedido(cliente.val())
+        })
+
+    },
+    buscaProdutos: function () {
+
+        $('#lista-busca-produtos').DataTable({
+            ajax: {
+                url: site + 'produtos',
+                dataSrc: 'data',
+                type: "GET",
+            },
+
+            columnDefs: [{
+                orderable: false,
+                className: 'select-checkbox',
+                targets: 0
+            }],
+            select: true,
+            rowId: 'prodId',
+            columns: [
+                { data: "prodId" },
+                { data: "prodCod" },
+                { data: "prodEAN" },
+                { data: "prodNome" },
+                { data: "prodPreco" },
+                { data: "prodCateg" }
+            ]
+        })
+
+        var table = $('#lista-busca-produtos').DataTable();
+        table.on('click', 'tr', function () {
+            table.rows().deselect();
+            var prodId = table.row($(this)).select().id()
+
+            app.pedProdInsert(prodId)
+            $('#busca-produtos').modal('hide')
+
+        })
+
+    },
+    listaProdsPedido: function () {
+
+        var prods = JSON.parse(localStorage.getItem('prods'))
+
+        console.log(prods)
+
+        $.each(prods, function (k, i) {
+
+            $('#table-pedido-produtos body').append('<tr><td>' + i.prodId + '</td><td>' + i.prodNome + '</td><td>' + i.pedProdPreco + '</td><td>' + i.pedProdQtd + '</td><td>' + i.pedProdSub +'</td><td><span class="fa fa-close"></span></td></tr>') 
+            console.log(i)
+        })
+
+        
+    },
+
+    pagePedido: function () {
+
+        var pedidoId = localStorage.getItem('pedidoId')
+
+        app.buscaProdutos()
+
+        if (pedidoId != null) {
+
+            app.ajax('GET', 'pedidos?pedidoId=' + pedidoId, '', function (res) {
+
+                if (res.error) {
+                    console.log(res.data.responseJSON.message)
+                } else {
+
+                    $('#num-pedido').html("Pedido N° " + res.data.pedido.pedidoId)
+
+                    $('form#pedido-cliente input[name=clienteId]').val(res.data.pedido.clienteId)
+                    $('form#pedido-cliente input[name=clienteNomeRazao]').val(res.data.pedido.clienteNomeRazao)
+
+                    localStorage.setItem('prods', JSON.stringify(res.data.produtos))
+
+                    app.listaProdsPedido()
+
+                }
             })
         }
+
+        $('.loading').hide()
     },
+    
+    pedProdInsert: function(prodId){
+
+        var pedidoId = localStorage.getItem('pedidoId'), prodId = prodId
+                
+        app.ajax('POST','pedidos/produtos?pedidoId='+pedidoId, {prodId:prodId},function(res){
+
+            if(res.error){
+                //console.log(res.data.responseJSON.message)
+                console.log(res)
+            }else{
+                console.log(res)
+            }
+        })
+    },
+
+    editPedProdEdit: function(){
+
+
+    }
+
 }
 
 

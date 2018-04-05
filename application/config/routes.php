@@ -59,5 +59,5 @@ $route['api/rs/clientes'] = 'api/rs/index/clientes';
 $route['api/rs/produtos'] = 'api/rs/index/produtos';
 $route['api/rs/empresas'] = 'api/rs/index/empresas';
 $route['api/rs/pedidos'] = 'api/rs/index/pedidos';
-
+$route['api/rs/pedidos/produtos'] = 'api/rs/index/pedidos_produtos';
 //API
