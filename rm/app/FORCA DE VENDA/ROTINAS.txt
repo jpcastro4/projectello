@@ -1,0 +1,35 @@
+Aplicação
+
+Cadastra a empresa
+Abre sincroniza com o banco
+
+Tabelas necessarias
+*vendedores/atendentes
+matricula
+nome
+senha
+
+*produtos
+cod
+nome
+unid
+preco
+preco_promo
+
+*clientes
+cod
+cnpj
+razao
+
+
+APP
+
+
+Abre o app
+
+Se não está credenciado
+
+Pede o CNPJ da empresa
+
+Pede a matricula e senha do vendedor
+

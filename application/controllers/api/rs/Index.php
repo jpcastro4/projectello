@@ -566,33 +566,39 @@ class Index extends REST_Controller{
                 ], 400);
             }
 
-            // if(!emtpy($this->input->post('pedProdQtd'))){
-            //     $pedProdQtd = $this->input->post('pedProdQtd');
-            // }else{
-            //     $pedProdQtd = 1;
-            // }
-
             $pedProdQtd = 1;
 
-            $this->db->where('prodId',$this->input->post('prodId'));
+            $this->db->where('prodId', $this->input->post('prodId'));
             $prod = $this->db->get('produtos')->row();
 
             $subtotal = $prod->prodPreco * $pedProdQtd;
 
             $insert = $this->db->insert('pedidosprodutos', array(
-                'pedProdQt'=>1,
-                'pedProdPreco'=>$prod->prodPreco,
-                'pedProdSub'=>$subtotal,
-                'prodId'=>$this->input->post('prodId'),
-                'pedidoId'=>$this->input->get('pedidoId'),
+                'pedProdQt'=> 1,
+                'pedProdPreco'=> $prod->prodPreco,
+                'pedProdSub'=> $subtotal,
+                'prodId'=> $this->input->post('prodId'),
+                'pedidoId'=> $this->input->get('pedidoId'),
             ));
+
+            $this->db->select('SUM(pedProdSub) as total');
+            $this->db->where('pedidoId', $this->input->get('pedidoId'));
+            $this->db->from('pedidosprodutos');
+            $pedido = $this->db->get();
+
+            $this->db->where('pedidoId', $this->input->get('pedidoId') );
+            $this->db->update(
+                "pedidos",
+                array(
+                    'pedidoTotal'=> $pedido->row()->total 
+                ) 
+            );
 
             if($insert){
                 $this->response( [
                     'status' => TRUE,
                     'message' => 'Produto inserido',
-                    'pedidoId'=>$this->db->insert_id(),
-                    'dados'=>$insert
+                    'dados'=> $pedido->row()->total
                 ], 200);
             }else{
                 $this->response( [
