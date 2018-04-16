@@ -18,7 +18,7 @@ Tela 5
 Lista produtos do pedido
 
 Tela 5.1
-Busca e lista produtos
+Busca e lista produtos e os deixa selecionaveis.
 
 Tela 7 
 Configurações gerais
