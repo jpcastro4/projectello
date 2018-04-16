@@ -12,6 +12,9 @@
     },
     "cordova-plugin-network-information": {
       "PACKAGE_NAME": "com.ellobeta.rm"
+    },
+    "cordova-plugin-console": {
+      "PACKAGE_NAME": "com.ellobeta.rm"
     }
   },
   "dependent_plugins": {}

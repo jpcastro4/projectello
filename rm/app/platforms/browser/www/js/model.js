@@ -44,12 +44,11 @@ var model = {
         }
     },
     connection: function () {
+        console.log(navigator.onLine)
 
-        var networkState = navigator.connection.type;
-
-        if (networkState == Connection.NONE) {
-            return true
-        }
+        var networkState = navigator.onLine
+       
+        return networkState
     },
     openPage: function (page, back = false ) {
 
@@ -91,11 +90,11 @@ var model = {
     loading: function (action) {
 
         if (action == 'open') {
-            $('#loading').removeClass('hidden')
+            $('.loading').removeClass('hidden')
         }
 
         if (action == 'close') {
-            $('#loading').addClass('hidden')
+            $('.loading').addClass('hidden')
         }
 
     },
@@ -142,58 +141,87 @@ var model = {
         })
 
     },
-
-    // GET API
-
-    homologar: function () {
+ 
+    get_device: function () {
 
         model.loading('open')
 
-        if (this.connection()) {
- 
-            model.cAlert('Verifique a internet','error',1500)
+        if (!this.connection()) {
+            
+            M.toast({ html: 'Verifique a internet' })
             model.loading('close')
 
-            return
+            return 
         }
-
-        var dados = $('#form-homologa').serializeJSON()
-
-        var networkState = navigator.connection.type;
-
-        var gadget = { deviceID: deviceID, registrationID: registrationID, empresaId: dados.empresaCnpj }
         
         this.ajax('get', 'homologa/?deviceId='+deviceID, '', function(res){
 
             if(res.error){
                 console.log(res.data)
+
+                M.toast({ html: res.data.responseJSON.message })
+                localStorage.setItem('homologaStatus', res.data.responseJSON.homologa)
+                                                
             }else{
-                console.log(res.message)
+                console.log(res )
+
+                if(res.homologa == null ){
+                    model.homologa()
+                }else{
+                    localStorage.setItem('homologaStatus',res.homologa)
+                }
+
+                M.toast({ html: res.message })
+                model.loading('close')
+                
             }
-        })  
-        // $.post(url+'homologa', gadget, function (data) {
+        })     
 
-        //     if (data.status == true) {
-        //         model.cAlert(data.message, 'success', 3000)
-        //         func.loading('close')
-        //     }
+    },
 
-        //     if (data.status == false) {
-        //         model.cAlert(data.message, 'error', 3000)
-        //         model.loading('close')
-        //     }
+    homologa: function(){
+        
+        model.loading('open') 
 
-        // },'json')
-        //     .fail(function (data) {
+        console.log('Internet ' + this.connection())
 
-        //         model.cAlert('Erro', 'error', 3000)
-        //         model.sendLog($.now() + ' ' + JSON.stringify(data))
-        //         model.loading('close')
+        if (!this.connection()) {
 
-        // })
+            M.toast({ html: 'Verifique a internet' })
+            model.loading('close')
 
-         
+             
+        }
 
+        var dados = $('#form-homologa').serializeJSON()
+        
+        if (dados.empresaCnpj == null){
+            M.toast({ html: 'Informe o CNPJ por favor' })
+            return
+        }
+
+        var post = { deviceId: deviceID, registrationID: registrationID, empresaCnpj: dados.empresaCnpj }
+
+        this.ajax('post','homologa',post , function(res){
+            
+            if (res.error) {
+
+                console.log(res.data)     
+
+                M.toast({ html: res.data.responseJSON.message })
+                model.loading('close')
+                           
+
+            } else {
+                console.log(res)
+
+                M.toast({ html: res.message })
+                model.loading('close')
+                
+            }
+
+        })
+        
     },
 
     //AREA DE PRODUTOS

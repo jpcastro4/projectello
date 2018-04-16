@@ -23,6 +23,9 @@
         },
         "cordova-plugin-network-information": {
             "PACKAGE_NAME": "com.ellobeta.rm"
+        },
+        "cordova-plugin-console": {
+            "PACKAGE_NAME": "com.ellobeta.rm"
         }
     },
     "dependent_plugins": {},
@@ -67,6 +70,7 @@
     ],
     "plugin_metadata": {
         "cordova-plugin-device": "2.0.1",
-        "cordova-plugin-network-information": "2.0.1"
+        "cordova-plugin-network-information": "2.0.1",
+        "cordova-plugin-console": "1.1.0"
     }
 }

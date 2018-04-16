@@ -1,26 +1,54 @@
 var controller = {
     
     initPages: function () {
-        if ($('.page#homologa').is(':visible')) {
-            this.pageHomologa()
+        if ($('.page#homologacao').is(':visible')) {
+            this.pageHomologacao()
         }
 
         if ($('.page#login').is(':visible')) {
-            this.pageLogin()
+            //this.pageLogin()
+        }
+
+        if ($('.page#pedidos').is(':visible')) {
+
+            this.pagePedidos()
+        }
+
+        if ($('.page#pedido').is(':visible')) {
+            //this.pagePedido()
         }
 
         if ($('.page#produtos').is(':visible')) {
             this.pageProdutos()
         }
 
-        if ($('.page#pedidos').is(':visible')) {
-            
-           this.pagePedidos()
-        }
+        
+    },
+    pageHomologacao: function(){
+         
+        model.loading('open')
 
-        if ($('.page#pedido').is(':visible')) {
-            //this.pagePedido()
+        if (localStorage.getItem('homologaStatus') == 2) {
+
+            model.loading('close')
+            model.openPage('login')
         }
+  
+        setInterval(() => {
+
+            if(localStorage.getItem('homologaStatus') == 2 ){
+
+                model.loading('close')
+                model.openPage('login')
+            }
+            
+            // if (localStorage.getItem('homologaStatus') == 1){
+            //     model.get_device()
+            // }
+
+            
+        }, 2000);
+
     },
     pagePedidos: function () {
 

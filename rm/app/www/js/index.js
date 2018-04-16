@@ -14,52 +14,41 @@ var app = {
     // APP CONSTRUCTOR
     bindEvents: function () {
         document.addEventListener('deviceready', this.onDeviceReady, false);
-        document.addEventListener("online", this.onlineConnection, false);
+        
         //document.addEventListener("backbutton", this.onBackKeyDown, false);
     },
     initialize: function () {
          
         this.bindEvents()
-        this.initializeEls()
+        
         
     },
     onDeviceReady: function () {
-
+        document.addEventListener("online", model.connection, false);
+       
         var attachFastClick = Origami.fastclick
         attachFastClick(document.body)
+        
+        if (device.available){
 
-        //inicliza de acordo com a plataforma
-        if (device.platform == 'browser') {
+            //inicliza de acordo com a plataforma
+            if (device.platform == 'browser') {
 
-            //localDb = window.openDatabase('Coletor', '1.0', 'Coletor BD', 2 * 1024 * 1024)
-            deviceID = '711C3126-FF51-4B07-958B-FD30182BA043' //localStorage.setItem('deviceID', '711C3126-FF51-4B07-958B-FD30182BA043')
-        }
+                deviceID = '711C3126-FF51-4B07-958B-FD30182BA043' //localStorage.setItem('deviceID', '711C3126-FF51-4B07-958B-FD30182BA043')
+            }
 
-        if (device.platform == 'Android') {
+            if (device.platform == 'Android') {
 
-            //$('.uuid').html(device.cordova)
+                deviceID = device.uuid //localStorage.setItem('deviceID', device.uuid)
+                
+            }
 
-            deviceID = device.uuid //localStorage.setItem('deviceID', device.uuid)
-            //localDb = window.openDatabase('Coletor', '1.0', 'Coletor BD', 2 * 1024 * 1024)
-            //localDb = window.sqlitePlugin.openDatabase({ name: 'coletorbd', location: 'default' })
-            // window.sqlitePlugin.echoTest(function() {
-            //     alert('ECHO test ok')
-            // });
-
-            // window.sqlitePlugin.selfTest(function() {
-            //     alert('SELF test OK');
-            // });
-
-            //inicializando o push
-            // $('.push-pesquisas').pullToRefresh({
-            //     callback: function () {
-            //         return model.listaPesquisas()
-            //     }
-            // });
+            app.initializeEls()
 
         }
+        
 
-
+    
         // if (device.available) {
 
         //     //inicializa o banco de dados
@@ -87,11 +76,9 @@ var app = {
         // }
 
         // init.back(true)
+ 
 
-        // $('.infopage').prepend('<li class="list-group-item"> Device ID: ' + device.uuid + '</li>')
-        // $('.infopage').prepend('<li class="list-group-item"> Plataforma: ' + device.platform + '</li>')
-
-        //model.loading('close')
+        
     },
     initializeEls: function () {
         //$.fn.dataTable.ext.errMode = 'throw';
@@ -114,7 +101,7 @@ var app = {
 
         $('#form-homologa').on('submit', function(e){
             e.preventDefault();
-            model.homologar()
+            model.get_device()
         })
 
         $('#save-prod').on('click', function (e) {
@@ -170,7 +157,6 @@ var app = {
 
 
 var init = {
-
     
     localizacao: ()=>{
         model.loading('open')

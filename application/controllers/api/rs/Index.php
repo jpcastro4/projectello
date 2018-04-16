@@ -1,11 +1,11 @@
-<?php
-
-require_once(APPPATH.'libraries/REST_Controller.php');
+<?php require_once(APPPATH.'libraries/REST_Controller.php');
 
 class Index extends REST_Controller{
 
     public function __construct(){
         parent::__construct();
+        header('Access-Control-Allow-Origin: *');
+        header("Access-Control-Allow-Methods: GET, POST, OPTIONS, PUT, DELETE");
 
         $this->load->model('Rsadmin_model', 'admin');
         
@@ -60,6 +60,7 @@ class Index extends REST_Controller{
                     $this->response( [
                         'status' => TRUE,
                         'homologa'=>2,
+                        'empresaId'=>$disp->row()->empresaId,
                         'message' => 'Dispositivo liberado'
                     ], 200);                    
                 }
@@ -70,7 +71,7 @@ class Index extends REST_Controller{
                         'status' => TRUE,
                         'homologa'=>3,
                         'message' => 'Dispositivo inativo'
-                    ], 200);                    
+                    ], 404);                    
                 }
                 
                 if($disp->row()->dispStatus == 4 ){
@@ -79,7 +80,7 @@ class Index extends REST_Controller{
                         'status' => FALSE,
                         'homologa'=>5,
                         'message' => 'Dispositivo bloqueado'
-                    ], 200);                    
+                    ], 404);                    
                 }
 
             }else{
@@ -87,8 +88,8 @@ class Index extends REST_Controller{
                 $this->response( [
                     'status' => FALSE,
                     'homologa'=>null,
-                    'message' => 'Device não cadastrado'
-                ], 200);
+                    'message' => 'Solicitando homologação'
+                ], 200 );
             }
 
         }else{
@@ -96,7 +97,7 @@ class Index extends REST_Controller{
             $this->response( [
                 'status' => FALSE,
                 'message' => 'Device não identificado'
-            ], 400);
+            ], 404);
 
         }
     }
@@ -108,13 +109,13 @@ class Index extends REST_Controller{
             $this->db->where('empresaCnpj',$this->input->post('empresaCnpj'));
             $res = $this->db->get('empresas');
 
-            if($result->num_rows() > 0 ){
+            if($res->num_rows() > 0 ){
 
                 $empresaId = $res->row()->empresaId;
 
                 $save = $this->db->insert('dispositivos',
                     array(
-                        'dispDeviceId'=>$deviceId,
+                        'dispDeviceId'=>$this->input->post('deviceId'),
                         'empresaId'=>$empresaId,
                         'dispStatus'=>1
                     )
@@ -132,18 +133,21 @@ class Index extends REST_Controller{
                     $this->response( [
                         'status' => FALSE,
                         'message' => 'Erro na homologação'
-                    ], 304);
+                    ], 404);
                 }
-
-                $return = $this->admin->homologa($empresaId);
                 
             }else{
 
                 $this->response( [
                     'status' => FALSE,
-                    'message' => 'Informe o CNPJ'
-                ], 304);               
+                    'message' => 'Empresa não encontrada'
+                ], 400);               
             }
+        }else{
+            $this->response( [
+                'status' => FALSE,
+                'message' => 'Informe o CNPJ'
+            ], 400);
         }
     }
 
