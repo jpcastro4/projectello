@@ -4,6 +4,13 @@ require_once(APPPATH.'libraries/REST_Controller.php');
 
 class Index extends REST_Controller{
 
+    public function __construct(){
+        parent::__construct();
+
+        $this->load->model('Rsadmin_model', 'admin');
+        
+    }
+
     public function index_get(){
 
     	// if(!$this->get('id') ){
@@ -25,7 +32,119 @@ class Index extends REST_Controller{
     	// $result = $user + $nives;
 
         // $this->response($result, 200);
+        
+        $this->response('API Remote Sales Difference', 200);
+    }
 
+    public function homologa_get(){
+
+        if($this->input->get('deviceId')){
+
+            $this->db->where('dispDeviceId',$this->input->get('deviceId'));
+            $disp = $this->db->get('dispositivos');
+
+            if($disp->num_rows() > 0){
+
+                if($disp->row()->dispStatus == 1 ){
+                    
+                    $this->response( [
+                        'status' => TRUE,
+                        'homologa'=>1,
+                        'message' => 'Aguardando liberação'
+                    ], 200);
+                    
+                }
+
+                if($disp->row()->dispStatus == 2 ){
+
+                    $this->response( [
+                        'status' => TRUE,
+                        'homologa'=>2,
+                        'message' => 'Dispositivo liberado'
+                    ], 200);                    
+                }
+
+                if($disp->row()->dispStatus == 3 ){
+
+                    $this->response( [
+                        'status' => TRUE,
+                        'homologa'=>3,
+                        'message' => 'Dispositivo inativo'
+                    ], 200);                    
+                }
+                
+                if($disp->row()->dispStatus == 4 ){
+
+                    $this->response( [
+                        'status' => FALSE,
+                        'homologa'=>5,
+                        'message' => 'Dispositivo bloqueado'
+                    ], 200);                    
+                }
+
+            }else{
+
+                $this->response( [
+                    'status' => FALSE,
+                    'homologa'=>null,
+                    'message' => 'Device não cadastrado'
+                ], 200);
+            }
+
+        }else{
+
+            $this->response( [
+                'status' => FALSE,
+                'message' => 'Device não identificado'
+            ], 400);
+
+        }
+    }
+
+    public function homologa_post(){
+
+        if($this->input->post('empresaCnpj')){
+
+            $this->db->where('empresaCnpj',$this->input->post('empresaCnpj'));
+            $res = $this->db->get('empresas');
+
+            if($result->num_rows() > 0 ){
+
+                $empresaId = $res->row()->empresaId;
+
+                $save = $this->db->insert('dispositivos',
+                    array(
+                        'dispDeviceId'=>$deviceId,
+                        'empresaId'=>$empresaId,
+                        'dispStatus'=>1
+                    )
+                );
+
+                if($save){
+
+                   $this->response( [
+                        'status' => TRUE,
+                        'empresaId'=>$empresaId,
+                        'message' => 'Homologação solicitada'
+                    ], 200);
+
+                }else{
+                    $this->response( [
+                        'status' => FALSE,
+                        'message' => 'Erro na homologação'
+                    ], 304);
+                }
+
+                $return = $this->admin->homologa($empresaId);
+                
+            }else{
+
+                $this->response( [
+                    'status' => FALSE,
+                    'message' => 'Informe o CNPJ'
+                ], 304);               
+            }
+        }
     }
 
      public function empresas_get(){

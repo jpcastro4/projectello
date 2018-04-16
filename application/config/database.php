@@ -95,16 +95,29 @@ $db['default'] = array(
 	'save_queries' => TRUE
 );
 
-//SEMPRE COLOCAR DEPOIS DA ARRAY
-if( $_SERVER['HTTP_HOST'] == 'localhost'){
+	$db['default']['hostname'] = 'mysql472.umbler.com:41890';
+	$db['default']['username'] = 'rsuser'; 
+	$db['default']['password'] = '|MHpI6n}w/4'; 
+	$db['default']['database'] = 'rs';
+
+ 
+// if( $_SERVER['HTTP_HOST'] == 'localhost'){
 	
-	$db['default']['hostname'] = 'localhost';
-	$db['default']['username'] = 'root'; 
-	$db['default']['password'] = ''; 
-	$db['default']['database'] = 'remotesales';
-}else{
-	$db['default']['hostname'] = 'localhost';//'grupoelloinvestimentos.com.mysql';
-	$db['default']['username'] = 'nowx_user';//'grupoelloinvestimentos_com';'grupoellouser';
-	$db['default']['password'] = '*ENbon@g@5A_';//'997110';'RHw5nk9B9Tx?';
-	$db['default']['database'] = 'nowx_principal';
-}
+// 	$db['default']['hostname'] = 'localhost';
+// 	$db['default']['username'] = 'root'; 
+// 	$db['default']['password'] = ''; 
+// 	$db['default']['database'] = 'remotesales';
+
+// }elseif($_SERVER['REQUEST_URI'] == '/ellobeta/rs'){
+
+// 	$db['default']['hostname'] = 'mysql472.umbler.com:41890';
+// 	$db['default']['username'] = 'rsuser'; 
+// 	$db['default']['password'] = '|MHpI6n}w/4'; 
+// 	$db['default']['database'] = 'rs';
+
+// }else{
+// 	$db['default']['hostname'] = 'localhost';//'grupoelloinvestimentos.com.mysql';
+// 	$db['default']['username'] = 'nowx_user';//'grupoelloinvestimentos_com';'grupoellouser';
+// 	$db['default']['password'] = '*ENbon@g@5A_';//'997110';'RHw5nk9B9Tx?';
+// 	$db['default']['database'] = 'nowx_principal';
+// }

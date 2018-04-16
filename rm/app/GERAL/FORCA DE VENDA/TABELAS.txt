@@ -1,0 +1,145 @@
+TELAS
+Tela 1
+Insere CNPJ
+
+Tela 2
+Insere credenciais
+
+Tela 3
+Lista pedidos
+Btn Novo pedido
+
+Tela 4 
+Busca cliente lista clientes
+Insere Cod cliente
+abre novo pedido
+
+Tela 5
+Lista produtos do pedido
+
+Tela 5.1
+Busca e lista produtos
+
+Tela 7 
+Configurações gerais
+Faturado ou não
+Entrega ou não
+
+Função fecha o pedido
+Se fechar o pedido envia o json para o bucket de pedidos
+
+
+REMOTE SALE
+
+Baixa o aplicativo, digita o cnpj da empresa e pede homologacao.
+
+O aparelho aparece no painel e fica aguardando ativação. Dá entrada no cadastro com o numero do id do aparelho.
+
+Administrador ativa ou desativa o aparelho no painel
+
+Se ativado:
+O vendedor pode fazer o login
+
+
+ADMINISTRATIVO
+
+Cadastra o cliente no portal usando apenas o CNPJ
+Cria token unico de acesso
+Define status como aguardando
+
+AWS:
+- Cria um bucket com o cnpj do cliente
+- Cria 5 sub-buckets
+gadgets / vendedores / clientes / produtos / pedidos
+
+
+CONCILIAÇÃO BD
+- Cadastra os nomes das colunas do bd de origem e define com qual coluna padrão ela é compativel.
+
+- faz a troca dos nomes das colunas
+
+- insere as tabelas no bucket correspondente
+
+--
+
+Sempre que houver inserção de dados nos buckets
+
+Define atualização no cadastro do cliente.
+
+O PouchDB visualiza a alteração e chama os arquivos do S3 e faz alteração no banco de dados local.
+
+--
+
+ADM CLIENTE
+
+Visualiza os dispositivos homologados
+Ativa ou desativa os dispositivos
+Visualiza as interações do dispositivos 
+- conexão com o sistema
+- status do celular (bateria,gps)
+- localização
+- pedidos enviados
+
+
+
+FUNCOES API - futuro
+
+usuario/login
+post - envia as credenciais de vendedor recebe o token de acesso
+
+produto
+get - informa o id do produto e recebe os dados
+post - informa o id do produto e altera os dados
+
+pedido
+get - informa o id do pedido e recebe os dados e lista de produtos 
+post - informa o id do pedido 
+se informar somente o id do pedido altera os dados do pedido
+se informar o id do produto insere novo produto
+
+
+--
+
+
+Id Interno
+Empresa
+Cnpj
+Senha
+
+
+- sincronização de dados
+*Vendedor/Atendente
+nome
+senha
+id
+
+
+*clientes
+id
+cod
+nome
+cnpj
+status
+
+
+*produtos
+id
+cod
+ean13
+descricao
+categoria
+preço unit
+preço promo
+
+
+*pedido/pre-venda
+id
+cod
+status
+
+
+*pedido-produtos/pre-venda-produtos
+id
+cod
+qtd
+preco
