@@ -4,9 +4,12 @@ class Rs extends CI_Controller {
 
     public function __construct(){
         parent::__construct();
+
+         $this->load->model('rsadmin_model','admin');
     }
    
     public function index(){
+        $this->native_session->set('user_id',1);
         // $this->native_session->unset_userdata('user_id');
         // $this->native_session->unset_userdata('superuser');
         // $this->native_session->unset_userdata('conta_id');
@@ -15,8 +18,8 @@ class Rs extends CI_Controller {
 
         //     redirect('rs/login');
         // }
-         
-        $this->load->view('rs/index');
+        $data['devices'] = $this->admin->ListaDispositivos();
+        $this->load->view('rs/index',$data);
          
     }
 

@@ -237,12 +237,14 @@ body, html{
     padding:0 15px;
 }
 .app-head .menu-icon.left{
-	/* position: absolute;
-    left: 0; */
+	position: absolute;
+    left: 0;
+    top:0;
 }
 .app-head .menu-icon.right{
-	/* position: absolute;
-    right: 0; */
+	position: absolute;
+    right: 0;
+    top:0;
 }
 
  

@@ -77,6 +77,7 @@ class Rsadmin_model extends CI_Model{
     }
 
     public function ListaEmpresas(){
+
         $result = $this->db->get('empresas');
 
         if($result->num_rows() > 0 ){
@@ -101,6 +102,9 @@ class Rsadmin_model extends CI_Model{
 
     public function ListaDispositivos(){
 
+        $sessao = $this->native_session->get('user_id');
+
+        $this->db->where('empresaId',$sessao);
         $result = $this->db->get('dispositivos');
 
         if($result->num_rows() > 0 ){

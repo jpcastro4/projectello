@@ -155,9 +155,6 @@ class Index extends REST_Controller{
 
         if($this->input->get('empresaId')){
 
-            // echo json_encode($this->input->get('empresaId'));
-            // return;
-  
             $this->db->where('empresaId',$this->input->get('empresaId'));
             $result = $this->db->get('empresas');
 

@@ -15,6 +15,9 @@
     },
     "cordova-plugin-console": {
       "PACKAGE_NAME": "com.ellobeta.rm"
+    },
+    "cordova-plugin-fcm": {
+      "PACKAGE_NAME": "com.ellobeta.rm"
     }
   },
   "dependent_plugins": {}

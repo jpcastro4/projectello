@@ -36,6 +36,14 @@ module.exports = [
         "id": "cordova-plugin-network-information.NetworkInfoProxy",
         "pluginId": "cordova-plugin-network-information",
         "runs": true
+    },
+    {
+        "file": "plugins/cordova-plugin-fcm/www/FCMPlugin.js",
+        "id": "cordova-plugin-fcm.FCMPlugin",
+        "pluginId": "cordova-plugin-fcm",
+        "clobbers": [
+            "FCMPlugin"
+        ]
     }
 ];
 module.exports.metadata = 
@@ -43,7 +51,8 @@ module.exports.metadata =
 {
     "cordova-plugin-device": "2.0.1",
     "cordova-plugin-network-information": "2.0.1",
-    "cordova-plugin-console": "1.1.0"
+    "cordova-plugin-console": "1.1.0",
+    "cordova-plugin-fcm": "2.1.2"
 }
 // BOTTOM OF METADATA
 });

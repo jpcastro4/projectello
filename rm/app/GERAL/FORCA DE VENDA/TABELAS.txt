@@ -1,3 +1,30 @@
+ADMIN CLIENTE
+
+Tela 1 
+Quadro de gadgets
+- deviceId
+- Id Interno
+- status do deviceId
+- device online ou nÃ£o
+
+
+Tela 2
+
+
+ADMIN
+Tela 1
+Visualiza lista de empresas
+
+Tela 2 
+Tela da empresa
+Status do pagamento
+Forma de pagamento
+Senha e credenciais
+Token de acesso
+Nome das tabelas com suas respectivas colunas
+
+
+
 TELAS
 Tela 1
 Insere CNPJ
@@ -21,11 +48,11 @@ Tela 5.1
 Busca e lista produtos e os deixa selecionaveis.
 
 Tela 7 
-Configurações gerais
-Faturado ou não
-Entrega ou não
+Configuraï¿½ï¿½es gerais
+Faturado ou nï¿½o
+Entrega ou nï¿½o
 
-Função fecha o pedido
+Funï¿½ï¿½o fecha o pedido
 Se fechar o pedido envia o json para o bucket de pedidos
 
 
@@ -33,7 +60,7 @@ REMOTE SALE
 
 Baixa o aplicativo, digita o cnpj da empresa e pede homologacao.
 
-O aparelho aparece no painel e fica aguardando ativação. Dá entrada no cadastro com o numero do id do aparelho.
+O aparelho aparece no painel e fica aguardando ativaï¿½ï¿½o. Dï¿½ entrada no cadastro com o numero do id do aparelho.
 
 Administrador ativa ou desativa o aparelho no painel
 
@@ -53,8 +80,8 @@ AWS:
 gadgets / vendedores / clientes / produtos / pedidos
 
 
-CONCILIAÇÃO BD
-- Cadastra os nomes das colunas do bd de origem e define com qual coluna padrão ela é compativel.
+CONCILIAï¿½ï¿½O BD
+- Cadastra os nomes das colunas do bd de origem e define com qual coluna padrï¿½o ela ï¿½ compativel.
 
 - faz a troca dos nomes das colunas
 
@@ -62,11 +89,11 @@ CONCILIAÇÃO BD
 
 --
 
-Sempre que houver inserção de dados nos buckets
+Sempre que houver inserï¿½ï¿½o de dados nos buckets
 
-Define atualização no cadastro do cliente.
+Define atualizaï¿½ï¿½o no cadastro do cliente.
 
-O PouchDB visualiza a alteração e chama os arquivos do S3 e faz alteração no banco de dados local.
+O PouchDB visualiza a alteraï¿½ï¿½o e chama os arquivos do S3 e faz alteraï¿½ï¿½o no banco de dados local.
 
 --
 
@@ -74,10 +101,10 @@ ADM CLIENTE
 
 Visualiza os dispositivos homologados
 Ativa ou desativa os dispositivos
-Visualiza as interações do dispositivos 
-- conexão com o sistema
+Visualiza as interaï¿½ï¿½es do dispositivos 
+- conexï¿½o com o sistema
 - status do celular (bateria,gps)
-- localização
+- localizaï¿½ï¿½o
 - pedidos enviados
 
 
@@ -107,7 +134,7 @@ Cnpj
 Senha
 
 
-- sincronização de dados
+- sincronizaï¿½ï¿½o de dados
 *Vendedor/Atendente
 nome
 senha
@@ -128,8 +155,8 @@ cod
 ean13
 descricao
 categoria
-preço unit
-preço promo
+preï¿½o unit
+preï¿½o promo
 
 
 *pedido/pre-venda
