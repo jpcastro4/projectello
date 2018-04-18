@@ -47,7 +47,7 @@ class Index extends REST_Controller{
                 ], 400);
             }
 
-            $empresa = $this->admin->getEmrpesa($this->input->post('empresaCnpj'));
+            $empresa = $this->admin->getEmpresa($this->input->post('empresaCnpj'));
 
             if($empresa){
                 $empresaId = $empresa->empresaId;
@@ -118,7 +118,7 @@ class Index extends REST_Controller{
             $this->response( [
                 'result' => FALSE,
                 'message' => 'Device não identificado'
-            ], 404);
+            ], 400);
 
         }
     }
