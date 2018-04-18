@@ -5,6 +5,7 @@ Solicita homologação com o CNPJ da empresa
 #API
 
 HOMOLOGACAO 
+Solicita se o device existe
 
 Se não existe
     Registra no push 
@@ -14,10 +15,10 @@ Se não existe
     RegistrationId    
     cadastra o device com status 1
 
-Se existe retorna o status
+Se sim retorna o status
 
 Troca de Status
-    Envia o status e CNPJ da empresa
+    Envia o status e CNPJ da empresa, dispId
 
 Recebe o Push de troca de status
     Ao abrir o push

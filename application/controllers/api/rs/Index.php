@@ -4,8 +4,8 @@ class Index extends REST_Controller{
 
     public function __construct(){
         parent::__construct();
-        // header('Access-Control-Allow-Origin: *');
-        // header("Access-Control-Allow-Methods: GET, POST, OPTIONS, PUT, DELETE");
+        header('Access-Control-Allow-Origin: *');
+        header("Access-Control-Allow-Methods: GET, POST, OPTIONS, PUT, DELETE");
 
         $this->load->model('Rsadmin_model', 'admin');
         
@@ -40,14 +40,14 @@ class Index extends REST_Controller{
 
         if($this->input->get('deviceId')){
 
-            if(!$this->input->post('empresaCnpj') ){
+            if(!$this->input->get('empresaCnpj') ){
                 $this->response( [
                     'status' => FALSE,
                     'message' => 'Cnpj não informado'
                 ], 400);
             }
 
-            $empresa = $this->admin->getEmpresa($this->input->post('empresaCnpj'));
+            $empresa = $this->admin->getEmpresa( $this->input->get('empresaCnpj') );
 
             if($empresa){
                 $empresaId = $empresa->empresaId;
@@ -57,7 +57,7 @@ class Index extends REST_Controller{
                 $this->response( [
                     'status' => FALSE,
                     'message' => 'Empresa inexistente'
-                ], 400);
+                ], 405);
             }
 
             $this->db->where( array('dispDeviceId'=>$this->input->get('deviceId'), 'empresaId'=>$empresaId ));
@@ -72,7 +72,6 @@ class Index extends REST_Controller{
                         'status'=>1,
                         'message' => 'Aguardando liberação'
                     ], 200);
-                    
                 }
 
                 if($disp->row()->dispStatus == 2 ){
@@ -92,7 +91,7 @@ class Index extends REST_Controller{
                         'result' => TRUE,
                         'status'=>3,
                         'message' => 'Dispositivo inativo'
-                    ], 404);                    
+                    ], 400);                    
                 }
                 
                 if($disp->row()->dispStatus == 4 ){
@@ -101,7 +100,7 @@ class Index extends REST_Controller{
                         'result' => FALSE,
                         'status'=>5,
                         'message' => 'Dispositivo bloqueado'
-                    ], 404);                    
+                    ], 400);                    
                 }
 
             }else{
@@ -118,7 +117,7 @@ class Index extends REST_Controller{
             $this->response( [
                 'result' => FALSE,
                 'message' => 'Device não identificado'
-            ], 400);
+            ], 405);
 
         }
     }

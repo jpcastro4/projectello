@@ -8,7 +8,8 @@ var localDb = null
 var historico = []
 var registrationID = null //localStorage.getItem('registrationId')
 var deviceID = null //localStorage.getItem('deviceID')
-var url = 'https://ellobeta.com/api/rs/'
+//var url = 'https://ellobeta.com/api/rs/'
+var url = 'http://localhost/ellobeta/api/rs/'
 
 //const pluralize = (count, noun, sSuffix = '', pSuffix = 's') => (count != 1) ? noun + pSuffix : noun + sSuffix
 
@@ -50,6 +51,22 @@ var app = {
                 if (data.isEnabled) {
                     console.log('isEnabled');
                 }
+            });
+
+            const push = PushNotification.init({
+                android: {
+                },
+                browser: {
+                }
+            })
+
+            push.on('notification', data => {
+                console.log(data.message);
+                console.log(data.title);
+                console.log(data.count);
+                console.log(data.sound);
+                console.log(data.image);
+                console.log(data.additionalData);
             });
 
             app.initializeEls()

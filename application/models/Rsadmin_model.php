@@ -77,7 +77,7 @@ class Rsadmin_model extends CI_Model{
     }
 
     public function getEmpresa($empresaCnpj){
-        $this->db->where('empresaCnpj', $this->input->post('empresaCnpj') );
+        $this->db->where('empresaCnpj', $this->input->get('empresaCnpj') );
         $res = $this->db->get('empresas');
 
         if($res->num_rows() > 0 ){

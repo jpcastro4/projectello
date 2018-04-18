@@ -105,7 +105,7 @@ var model = {
             android: {
             },
             browser: {
-                pushServiceURL: 'http://push.api.phonegap.com/v1/push'
+                pushServiceURL: 'http://localhost:3000'
             }
         })
 
@@ -134,19 +134,31 @@ var model = {
 
             return 
         }
+
+        var dados = $('#form-homologa').serializeJSON()
+
+        if (dados.empresaCnpj == null) {
+            M.toast({ html: 'Informe o CNPJ por favor' })
+            return
+        }
+
+        var params = '/?deviceId=' + deviceID + '&empresaCnpj=' + dados.empresaCnpj
         
-        this.ajax('get', 'device/?deviceId='+deviceID, '', function(res){
+        this.ajax('get', 'device'+params, '', function(res){
 
             if(res.error){
                 console.log(res.data)
 
                 M.toast({ html: res.data.responseJSON.message })
-                localStorage.setItem('homologaStatus', res.data.responseJSON.homologa)
+                if(res.data.status == 400 ){
+                    localStorage.setItem('homologaStatus', res.data.responseJSON.status)
+                }
+                
                                                 
             }else{
                 console.log(res )
 
-                if(res.homologa == null ){
+                if(res.status == null ){
                     model.homologa()
                 }else{
                     localStorage.setItem('homologaStatus',res.homologa)
