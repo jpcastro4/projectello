@@ -40,7 +40,6 @@ class Index extends REST_Controller{
 
         if($this->input->get('deviceId')){
 
-            
             if(!$this->input->post('empresaCnpj') ){
                 $this->response( [
                     'status' => FALSE,
@@ -124,7 +123,7 @@ class Index extends REST_Controller{
         }
     }
 
-    public function dispositivo_post(){
+    public function device_post(){
 
         if($this->input->get('dispId')){
 
