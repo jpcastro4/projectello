@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "735015349615",
+    "firebase_url": "https://remote-sales.firebaseio.com",
+    "project_id": "remote-sales",
+    "storage_bucket": "remote-sales.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:735015349615:android:697ed8b1bdc3c768",
+        "android_client_info": {
+          "package_name": "com.ellobeta.rm"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "735015349615-n8g1dc0o4oq4c5unv8rntejp2cvl32q7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBdA8LdreEGs4oq5__XuAv4WrflhGD2fig"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

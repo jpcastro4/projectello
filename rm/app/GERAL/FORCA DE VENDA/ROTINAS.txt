@@ -1,35 +1,48 @@
-Aplica��o
+Abre o aplicativo
 
-Cadastra a empresa
-Abre sincroniza com o banco
+Solicita homologação com o CNPJ da empresa
 
-Tabelas necessarias
-*vendedores/atendentes
-matricula
-nome
-senha
+#API
 
-*produtos
-cod
-nome
-unid
-preco
-preco_promo
+HOMOLOGACAO 
 
-*clientes
-cod
-cnpj
-razao
+Se não existe
+    Solicita o cnpj
+    Registra no push 
+    retorna o token
+    cadastra o device com status 1
+
+Se existe retorna o status
 
 
-APP
+Troca de Status
+    Envia o status e CNPJ da empresa
+
+Recebe o Push de troca de status
+    Ao abrir o push
+    verifica o status
+
+    Se 1
+    Insere status de homologado
+    Inscreve no topico (cnpj da empresa)
+    Executa atualização
+
+    Se 3
+    Insere status de inativo
+    Executa atualização
+
+    Se 4
+    Insere status de bloqueado
 
 
-Abre o app
+Push de atualização
+    Ao abrir o push
+    Verifica o status 
 
-Se n�o est� credenciado
+    Se 2
+    Executa atualização
 
-Pede o CNPJ da empresa
 
-Pede a matricula e senha do vendedor
-
+Atualização
+    Vai no repositorio do CNPJ homologado
+    Recupera os arquivos e atualiza o banco de produtos, clientes e vendedores

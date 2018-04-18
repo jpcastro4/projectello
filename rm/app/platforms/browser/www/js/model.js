@@ -18,44 +18,19 @@ var model = {
         })
 
     },
-    sair: () => {
-
-        if (typeof cordova !== 'undefined') {
-            if (navigator.app) {
-                navigator.app.exitApp()
-            }
-            else if (navigator.device) {
-                navigator.device.exitApp()
-            }
-        } else {
-            window.close();
-            $timeout(function () {
-                self.showCloseMessage = true
-            })
-        }
-    },
-
-    sync: function(status){
-        
-        if(status == true){
-            model.openPage('sync')
-        }else{
-            model.openPage('index')
-        }
-    },
     connection: function () {
         console.log(navigator.onLine)
 
         var networkState = navigator.onLine
-       
+
         return networkState
     },
-    openPage: function (page, back = false ) {
+    openPage: function (page, back = false) {
 
         $('body').find('.page').addClass('hidden')
 
         $('#' + page).removeClass('hidden')
-       
+
         if (back) {
             //$('#' + page + ' .corpo').removeClass('slideInRight').addClass('slideInLeft')
 
@@ -64,24 +39,24 @@ var model = {
         }
 
         //se volta não guarda no histórcio
-        if(back == false ){
-            if(page == 'sync'){
+        if (back == false) {
+            if (page == 'sync') {
                 historico = []
-            }else{
+            } else {
                 if (page != 'coleta') {
 
                     if (historico[historico.length - 1] != page) {
                         historico.push(page)
                     }
                 }
-            }     
+            }
         }
 
-        if (page=='coleta'){
+        if (page == 'coleta') {
 
             init.back(false)
             document.removeEventListener("backbutton", init.onBackKeyDown, false);
-        }else{
+        } else {
             document.addEventListener("backbutton", init.onBackKeyDown, false);
         }
 
@@ -98,39 +73,22 @@ var model = {
         }
 
     },
-    cAlert: function (message, status, exitOut = false, log = false) {
+    sair: () => {
 
-        var rand = 'c-alert-' + Math.floor((Math.random() * 10) + 1)
-
-        $('.rot-c-alert').prepend('<div class="c-alert animated flipInX ' + rand + ' ' + status + ' "> ' + message + ' </div>')
-
-        if (exitOut) {
-            setTimeout(function () {
-                $('body').find('.' + rand).removeClass('flipInX').addClass('flipOutX')
-
-                setTimeout(function () {
-                    $('body').find('.' + rand).remove();
-                }, exitOut)
-
-            }, exitOut)
+        if (typeof cordova !== 'undefined') {
+            if (navigator.app) {
+                navigator.app.exitApp()
+            }
+            else if (navigator.device) {
+                navigator.device.exitApp()
+            }
         } else {
-            setTimeout(function () {
-                $('body').find('.' + rand).removeClass('flipInX').addClass('flipOutX')
-
-                setTimeout(function () {
-                    $('body').find('.' + rand).remove();
-                }, 6000)
-
-            }, 6000)
+            window.close();
+            $timeout(function () {
+                self.showCloseMessage = true
+            })
         }
-
-        if (log) {
-            //$('.infopage .consolelog').html('<li class="list-group-item"> Bancos iniciados </li>')
-            model.sendLog($.now() + ' ' + JSON.stringify(message))
-            navigator.vibrate(200)
-        }
-    },
-
+    },  
     sendLog: function (log) {
 
         $('.infopage .consolelog').html(log)
@@ -188,9 +146,7 @@ var model = {
         if (!this.connection()) {
 
             M.toast({ html: 'Verifique a internet' })
-            model.loading('close')
-
-             
+            model.loading('close')            
         }
 
         var dados = $('#form-homologa').serializeJSON()

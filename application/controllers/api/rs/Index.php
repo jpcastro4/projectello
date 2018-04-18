@@ -36,11 +36,32 @@ class Index extends REST_Controller{
         $this->response('API Remote Sales Difference', 200);
     }
 
-    public function homologa_get(){
+    public function device_get(){
 
         if($this->input->get('deviceId')){
 
-            $this->db->where('dispDeviceId',$this->input->get('deviceId'));
+            
+            if(!$this->input->post('empresaCnpj') ){
+                $this->response( [
+                    'status' => FALSE,
+                    'message' => 'Cnpj não informado'
+                ], 400);
+            }
+
+            $empresa = $this->admin->getEmrpesa($this->input->post('empresaCnpj'));
+
+            if($empresa){
+                $empresaId = $empresa->empresaId;
+
+            }else{
+
+                $this->response( [
+                    'status' => FALSE,
+                    'message' => 'Empresa inexistente'
+                ], 400);
+            }
+
+            $this->db->where( array('dispDeviceId'=>$this->input->get('deviceId'), 'empresaId'=>$empresaId ));
             $disp = $this->db->get('dispositivos');
 
             if($disp->num_rows() > 0){
@@ -48,8 +69,8 @@ class Index extends REST_Controller{
                 if($disp->row()->dispStatus == 1 ){
                     
                     $this->response( [
-                        'status' => TRUE,
-                        'homologa'=>1,
+                        'result' => TRUE,
+                        'status'=>1,
                         'message' => 'Aguardando liberação'
                     ], 200);
                     
@@ -58,9 +79,10 @@ class Index extends REST_Controller{
                 if($disp->row()->dispStatus == 2 ){
 
                     $this->response( [
-                        'status' => TRUE,
-                        'homologa'=>2,
-                        'empresaId'=>$disp->row()->empresaId,
+                        'result' => TRUE,
+                        'dispId'=>$disp->row()->dispId,
+                        'status'=>2,
+                        'empresaId'=>$empresaId,
                         'message' => 'Dispositivo liberado'
                     ], 200);                    
                 }
@@ -68,8 +90,8 @@ class Index extends REST_Controller{
                 if($disp->row()->dispStatus == 3 ){
 
                     $this->response( [
-                        'status' => TRUE,
-                        'homologa'=>3,
+                        'result' => TRUE,
+                        'status'=>3,
                         'message' => 'Dispositivo inativo'
                     ], 404);                    
                 }
@@ -77,8 +99,8 @@ class Index extends REST_Controller{
                 if($disp->row()->dispStatus == 4 ){
 
                     $this->response( [
-                        'status' => FALSE,
-                        'homologa'=>5,
+                        'result' => FALSE,
+                        'status'=>5,
                         'message' => 'Dispositivo bloqueado'
                     ], 404);                    
                 }
@@ -86,8 +108,8 @@ class Index extends REST_Controller{
             }else{
 
                 $this->response( [
-                    'status' => FALSE,
-                    'homologa'=>null,
+                    'result' => FALSE,
+                    'status'=>null,
                     'message' => 'Solicitando homologação'
                 ], 200 );
             }
@@ -95,10 +117,63 @@ class Index extends REST_Controller{
         }else{
 
             $this->response( [
-                'status' => FALSE,
+                'result' => FALSE,
                 'message' => 'Device não identificado'
             ], 404);
 
+        }
+    }
+
+    public function dispositivo_post(){
+
+        if($this->input->get('dispId')){
+
+            $this->db->where('dispId',$this->input->get('dispId'));
+            $res = $this->db->get('dispositivos');
+
+            if($res->num_rows() > 0 ){
+
+                $saveArray = array('deviceUpdate'=> date('Y-m-d H:i:s') );
+
+                if($this->input->post('deviceStatus')){
+                    $saveArray['dispStatus'] = $this->input->post('deviceStatus');
+                }
+
+                if($this->input->post('deviceNotifReg')){
+                    $saveArray['dispNotifId'] = $this->input->post('deviceNotifReg');
+                }
+                
+                $this->db->where('dispId',$this->input->get('dispId'));
+                $save = $this->db->update('dispositivos',
+                    $saveArray
+                );
+
+                if($save){
+
+                   $this->response( [
+                        'status' => TRUE,
+                        'message' => 'Device atualizado'
+                    ], 200);
+
+                }else{
+                    $this->response( [
+                        'status' => FALSE,
+                        'message' => 'Erro na alteração'
+                    ], 404);
+                }
+                
+            }else{
+
+                $this->response( [
+                    'status' => FALSE,
+                    'message' => 'Dispositivo inexistente'
+                ], 400);               
+            }
+        }else{
+            $this->response( [
+                'status' => FALSE,
+                'message' => 'Informe o Id do Dispositivo'
+            ], 400);
         }
     }
 
@@ -151,7 +226,9 @@ class Index extends REST_Controller{
         }
     }
 
-     public function empresas_get(){
+    
+
+    public function empresas_get(){
 
         if($this->input->get('empresaId')){
 

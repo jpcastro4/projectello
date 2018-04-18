@@ -2,10 +2,6 @@ var db = {
 
     init: function(){
 
-       // model.cAlert('Iniciando tabelas', 'info', 1500)
-       // model.loading('open')
-        $('#loading .log').text('Abrindo banco')
-        this.initTables()
     },
 
     initTables: function(){

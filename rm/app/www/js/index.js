@@ -1,12 +1,14 @@
 
-// var pesquisasDb = new PouchDB('Pesquisas');
-// var coletasDb = new PouchDB('Coletas');
+var deviceDb = new PouchDB('Device');
+// var representantesDb = new PouchDB('Representantes');
+// var clientesDb = new PouchDB('Clientes');
+// var produtosDb = new PouchDB('Produtos');
 
 var localDb = null
 var historico = []
 var registrationID = null //localStorage.getItem('registrationId')
 var deviceID = null //localStorage.getItem('deviceID')
-var url = 'http://localhost/ellobeta/api/rs/'
+var url = 'http://ellobeta.com/api/rs/'
 
 const pluralize = (count, noun, sSuffix = '', pSuffix = 's') => (count != 1) ? noun + pSuffix : noun + sSuffix
 
@@ -20,8 +22,7 @@ var app = {
     initialize: function () {
          
         this.bindEvents()
-        
-        
+                
     },
     onDeviceReady: function () {
         document.addEventListener("online", model.connection, false);
@@ -44,6 +45,10 @@ var app = {
             }
 
             app.initializeEls()
+
+            FCMPlugin.getToken(function (token) {
+                alert(token);
+            });
 
         }
         
@@ -125,34 +130,7 @@ var app = {
         $('.modal#busca-produtos').on('show.bs.modal', function (e) {
 
         })
-    },
-     
-    openPage: function (pageId) {
-
-        $('body').find('.page').each(function () {
-            $(this).addClass('hidden')
-        })
-        
-        $('#' + pageId).removeClass('hidden')
-
-        contoller.initPages()
-    },
-    ajax: function (type, action, data, callback) {
-
-        $.ajax({
-            type: type,
-            url: site + action,
-            data: data,
-            dataType: 'json',
-            success: function (data) {
-                return callback(data)
-            },
-            error: function (data) {
-                return callback({ error: true, data: data })
-            }
-        })
-
-    },
+    },  
 }
 
 
