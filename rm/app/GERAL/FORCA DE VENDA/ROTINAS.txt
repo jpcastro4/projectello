@@ -7,13 +7,14 @@ Solicita homologação com o CNPJ da empresa
 HOMOLOGACAO 
 
 Se não existe
-    Solicita o cnpj
     Registra no push 
-    retorna o token
+    Retorna o token
+    Envia o CNPJ
+    DeviceId
+    RegistrationId    
     cadastra o device com status 1
 
 Se existe retorna o status
-
 
 Troca de Status
     Envia o status e CNPJ da empresa

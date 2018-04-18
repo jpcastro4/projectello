@@ -8,9 +8,11 @@ var localDb = null
 var historico = []
 var registrationID = null //localStorage.getItem('registrationId')
 var deviceID = null //localStorage.getItem('deviceID')
-var url = 'http://ellobeta.com/api/rs/'
+var url = 'https://ellobeta.com/api/rs/'
 
-const pluralize = (count, noun, sSuffix = '', pSuffix = 's') => (count != 1) ? noun + pSuffix : noun + sSuffix
+//const pluralize = (count, noun, sSuffix = '', pSuffix = 's') => (count != 1) ? noun + pSuffix : noun + sSuffix
+
+
 
 var app = {
     // APP CONSTRUCTOR
@@ -44,11 +46,13 @@ var app = {
                 
             }
 
-            app.initializeEls()
-
-            FCMPlugin.getToken(function (token) {
-                alert(token);
+            PushNotification.hasPermission(data => {
+                if (data.isEnabled) {
+                    console.log('isEnabled');
+                }
             });
+
+            app.initializeEls()
 
         }
         
@@ -107,6 +111,7 @@ var app = {
         $('#form-homologa').on('submit', function(e){
             e.preventDefault();
             model.get_device()
+            
         })
 
         $('#save-prod').on('click', function (e) {
@@ -130,7 +135,8 @@ var app = {
         $('.modal#busca-produtos').on('show.bs.modal', function (e) {
 
         })
-    },  
+    }
+    
 }
 
 

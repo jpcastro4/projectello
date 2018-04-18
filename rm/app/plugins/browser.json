@@ -16,10 +16,10 @@
     "cordova-plugin-console": {
       "PACKAGE_NAME": "com.ellobeta.rm"
     },
-    "cordova-plugin-fcm": {
+    "cordova-plugin-statusbar": {
       "PACKAGE_NAME": "com.ellobeta.rm"
     },
-    "cordova-plugin-statusbar": {
+    "phonegap-plugin-push": {
       "PACKAGE_NAME": "com.ellobeta.rm"
     }
   },

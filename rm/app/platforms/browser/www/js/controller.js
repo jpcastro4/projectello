@@ -10,7 +10,6 @@ var controller = {
         }
 
         if ($('.page#pedidos').is(':visible')) {
-
             this.pagePedidos()
         }
 

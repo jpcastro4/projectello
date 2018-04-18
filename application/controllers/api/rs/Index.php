@@ -191,8 +191,10 @@ class Index extends REST_Controller{
                 $save = $this->db->insert('dispositivos',
                     array(
                         'dispDeviceId'=>$this->input->post('deviceId'),
+                        'dispNotifId'=>$this->input->post('deviceNotifReg'),
                         'empresaId'=>$empresaId,
-                        'dispStatus'=>1
+                        'dispStatus'=>1,
+                        'deviceUpdate'=> date('Y-m-d H:i:s')
                     )
                 );
 
@@ -201,6 +203,7 @@ class Index extends REST_Controller{
                    $this->response( [
                         'status' => TRUE,
                         'empresaId'=>$empresaId,
+                        'dispId'=>$this->db->insert_id(),
                         'message' => 'Homologação solicitada'
                     ], 200);
 

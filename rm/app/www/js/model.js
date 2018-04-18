@@ -99,6 +99,29 @@ var model = {
         })
 
     },
+    setupPush: function () {
+
+        const push = PushNotification.init({
+            android: {
+            },
+            browser: {
+                pushServiceURL: 'http://push.api.phonegap.com/v1/push'
+            }
+        })
+
+        return push
+    },
+
+    tokenFCM: function () {
+
+        const push = this.setupPush()
+
+        push.on('registration', (data) => {
+            registrationID = data.registrationId
+        });
+
+
+    },
  
     get_device: function () {
 
@@ -112,7 +135,7 @@ var model = {
             return 
         }
         
-        this.ajax('get', 'homologa/?deviceId='+deviceID, '', function(res){
+        this.ajax('get', 'device/?deviceId='+deviceID, '', function(res){
 
             if(res.error){
                 console.log(res.data)
@@ -136,9 +159,9 @@ var model = {
         })     
 
     },
+    
 
-    homologa: function(){
-        
+    homologa: function(){        
         model.loading('open') 
 
         console.log('Internet ' + this.connection())
@@ -155,28 +178,29 @@ var model = {
             M.toast({ html: 'Informe o CNPJ por favor' })
             return
         }
+        
+        this.tokenFCM()
 
-        var post = { deviceId: deviceID, registrationID: registrationID, empresaCnpj: dados.empresaCnpj }
+        var post = { deviceId: deviceID, deviceNotifReg: registrationID, empresaCnpj: dados.empresaCnpj }
 
-        this.ajax('post','homologa',post , function(res){
-            
-            if (res.error) {
-
-                console.log(res.data)     
-
-                M.toast({ html: res.data.responseJSON.message })
-                model.loading('close')
-                           
-
-            } else {
-                console.log(res)
-
-                M.toast({ html: res.message })
-                model.loading('close')
+            this.ajax('post','homologa',post , function(res){
                 
-            }
+                if (res.error) {
 
-        })
+                    console.log(res.data)     
+
+                    M.toast({ html: res.data.responseJSON.message })
+                    model.loading('close')
+                        
+                } else {
+                    console.log(res)
+
+                    M.toast({ html: res.message })
+                    model.loading('close')
+                    
+                }
+
+            })
         
     },
 

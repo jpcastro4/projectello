@@ -23,18 +23,18 @@
     "is_top_level": true,
     "variables": {}
   },
-  "cordova-plugin-fcm": {
-    "source": {
-      "type": "registry",
-      "id": "cordova-plugin-fcm"
-    },
-    "is_top_level": true,
-    "variables": {}
-  },
   "cordova-plugin-statusbar": {
     "source": {
       "type": "registry",
       "id": "cordova-plugin-statusbar@2.4.2"
+    },
+    "is_top_level": true,
+    "variables": {}
+  },
+  "phonegap-plugin-push": {
+    "source": {
+      "type": "registry",
+      "id": "phonegap-plugin-push@2.2.2"
     },
     "is_top_level": true,
     "variables": {}

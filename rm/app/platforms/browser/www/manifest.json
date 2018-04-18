@@ -1,11 +1,1 @@
-{
-  "background_color": "#FFF",
-  "display": "standalone",
-  "name": "Remote Sales",
-  "short_name": "Remote Sales",
-  "version": "com.ellobeta.rm",
-  "description": "A blank PhoneGap app.",
-  "author": "PhoneGap Team",
-  "icons": [],
-  "start_url": "index.html"
-}
+{"background_color":"#FFF","display":"standalone","name":"Remote Sales","short_name":"Remote Sales","version":"com.ellobeta.rm","description":"A blank PhoneGap app.","author":"PhoneGap Team","icons":[],"start_url":"index.html","gcm_sender_id":"996231231186"}
