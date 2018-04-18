@@ -166,13 +166,13 @@ class Index extends REST_Controller{
                 $this->response( [
                     'status' => FALSE,
                     'message' => 'Dispositivo inexistente'
-                ], 400);               
+                ], 404);               
             }
         }else{
             $this->response( [
                 'status' => FALSE,
                 'message' => 'Informe o Id do Dispositivo'
-            ], 400);
+            ], 404);
         }
     }
 
