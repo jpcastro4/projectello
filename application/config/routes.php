@@ -61,5 +61,6 @@ $route['api/rs/empresas'] = 'api/rs/index/empresas';
 $route['api/rs/pedidos'] = 'api/rs/index/pedidos';
 $route['api/rs/pedidos/produtos'] = 'api/rs/index/pedidos_produtos';
 
+$route['api/rs/device'] = 'api/rs/index/device';
 $route['api/rs/homologa'] = 'api/rs/index/homologa';
 //API
