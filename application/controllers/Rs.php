@@ -1,4 +1,7 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+use Kreait\Firebase;
+use Kreait\Firebase\Factory;
+use Kreait\Firebase\ServiceAccount;
 
 class Rs extends CI_Controller {
 
@@ -21,6 +24,37 @@ class Rs extends CI_Controller {
         $data['devices'] = $this->admin->ListaDispositivos();
         $this->load->view('rs/index',$data);
          
+    }
+
+    public function admin(){
+ 
+        $data['empresas'] = $this->admin->ListaEmpresas();
+
+        $this->load->view('rs/admin/index',$data);
+    }   
+    
+    private function authFirebase(){
+
+        $serviceAccount = ServiceAccount::fromJsonFile(__DIR__.'/gcloud/firebase_credentials.json');
+
+        $firebase = (new Factory)
+            ->withServiceAccount($serviceAccount)
+            ->create();
+
+        $auth = $firebase->getAuth();
+    }
+    
+    public function noti(){
+
+        //echo $this->admin->notificacoes();
+
+        $this->authFirebase();
+
+        $firebase = (new Firebase\Factory())->withDefaultStorageBucket('remote-sales.appspot.com')->create($empresaCnpj);
+        echo $firebase->getStorage();
+        
+        $firebase2 = (new Firebase\Factory())->withDefaultStorageBucket('remote-sales.appspot.com')->create($empresaCnpj.'/pedidos');
+        echo $firebase2->getStorage();
     }
 
     public function login(){

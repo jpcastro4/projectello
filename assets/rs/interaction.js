@@ -8,6 +8,10 @@ var app = {
 
         this.initPages()
         
+        $('.dispStatus').on('change', function(){
+
+            app.statusDispositivo($(this))
+        })
         $('#save-prod').on('click', function (e) {
             e.preventDefault()
             app.prodInsert()
@@ -103,7 +107,7 @@ var app = {
     },
     empresaInsert: function () {
 
-        var form = $('form#empresa-insert'), action = form.attr('action'), data = form.serialize(), save = true
+        var form = $('form#nova-empresa'), action = form.attr('action'), data = form.serialize(), save = true
 
         form.find('input').each(function () {
 
@@ -117,10 +121,57 @@ var app = {
 
         if (save) {
             this.ajax('post', action, data, function (res) {
-                //console.log(res)
-                location.reload()
+                console.log(res)
+
+                if(res.status == true){
+                    location.reload()
+                }else{
+                    alert("ERRO empresaInsert")
+                }
+                 
             })
         }
+    },
+
+    sendPush: function(infos){
+        
+        this.ajax('get','dispositivos?dispId='+infos.dispId,'', function(rs){
+
+            if(rs.status == false){
+                console.log('erro')
+                console.log(rs)
+            }else{
+
+                var data = {
+                    title: 'Remote Sales',
+                    message: 'Dispositivo liberado',
+                    type: 'homologacao',
+                    status: rs.dispStatus
+                }
+
+                console.log('enviando push')
+                
+                this.ajax('post', 'sendPush', { to: rs.dispNotifId, data: data }, function (res) {
+                    console.log(res)
+
+                })
+            }
+
+        })
+
+    },
+
+    statusDispositivo: function(el){
+
+        var dispId = el.data('dispositivo'), status = el.val()
+
+        this.ajax('post','dispositivos?dispId='+dispId,{dispStatus:status}, function(res){
+
+            if(res.status == true){
+                app.sendPush({ dispId: dispId, dispStatus: status })
+            }
+        })
+
     },
 
     //AREA DE PRODUTOS

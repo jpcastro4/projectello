@@ -1,9 +1,10 @@
 <?php
+
+
 class Rsadmin_model extends CI_Model{
 
     public function __construct(){
         parent::__construct();
-
         $this->load->helper('data');
     }
 
@@ -106,9 +107,34 @@ class Rsadmin_model extends CI_Model{
         );
 
         if($rs){
-            return 'Emrpesa adicionada';
+
+            //add buckets no google storage
+            
+            return true;
         }
         return false;
+    }
+
+    private function authFirebase(){
+
+        $serviceAccount = ServiceAccount::fromJsonFile(__DIR__.'/gcloud/firebase_credentials.json');
+
+        $firebase = (new Factory)
+            ->withServiceAccount($serviceAccount)
+            ->create();
+
+        $auth = $firebase->getAuth();
+    }
+
+    public function AddBuckets($empresaCnpj){
+
+        $this->authFirebase();
+
+        $firebase = (new Firebase\Factory())->withDefaultStorageBucket('remote-sales.appspot.com')->create($empresaCnpj);
+        $firebase->getStorage();
+        
+        $firebase2 = (new Firebase\Factory())->withDefaultStorageBucket('remote-sales.appspot.com')->create($empresaCnpj.'/pedidos');
+        $firebase2->getStorage();
     }
 
     public function ListaDispositivos(){
@@ -124,6 +150,46 @@ class Rsadmin_model extends CI_Model{
         }
 
         return false;
+    }
+
+    public function notificacoes(){
+
+        $arrayToSend = array(
+            'to' => 'ffG6bMNQBfk:APA91bG6zgeC5TgPrKK5Lax1Nyo4wzRf0uWP024kEb9z6GfiuMvmzt9F1ORwyCXbLrG_TlhXkHK72mQwe4s6HrsoCuIS6lXkrRYr2y3lwLHDdbni9KnU29DhH4kV5388eXl-DfMI_pfT',
+            'data' => array(
+                'title'=>'Mensage teste',
+                'message'=>'Texto da mensagem'
+            ),
+            'priority'=>'high',
+            'sound'=>true
+        );
+
+        $data = json_encode($arrayToSend);
+        //FCM API end-point
+        $url = 'https://fcm.googleapis.com/fcm/send';
+        //api_key in Firebase Console -> Project Settings -> CLOUD MESSAGING -> Server key
+        $server_key = 'AAAAqyJULW8:APA91bEIHG6iEgTa_QApPC37PVzweRD7Hl-yLPvfCbwt5AlSrsIaAUlsltbg9RqhAb--tfv795qJRcTT9kZV3WJCz24_bd1tizJJMbRq2rCMUI30ICzNTA3FAsUG1K66-JxHfRQi9YlA';
+        //header with content_type api key
+        $headers = array(
+            'Content-Type:application/json',
+            'Authorization:key='.$server_key
+        );
+        //CURL request to route notification to FCM connection server (provided by Google)
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+        $result = curl_exec($ch);
+        if ($result === FALSE) {
+            die('Oops! FCM Send Error: ' . curl_error($ch));
+        }else{
+            return true;
+        }
+        curl_close($ch);
     }
 
     public function BlockDispositivo($dispositivoId){

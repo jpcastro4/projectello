@@ -1,0 +1,11 @@
+{
+    "name": "application/ellobeta",
+    "require": {
+    },
+    "authors": [
+        {
+            "name": "gdifference",
+            "email": "jp@grupodifference.com"
+        }
+    ]
+}

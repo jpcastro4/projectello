@@ -102,7 +102,36 @@ class Index extends REST_Controller{
         }
     }
 
-    public function device_post(){
+    public function dispositivos_get(){
+
+        if($this->input->get('dispId')){
+
+            $this->db->where( 'dispId',$this->input->get('dispId'));
+            $disp = $this->db->get('dispositivos');
+
+            if($disp->num_rows() > 0){
+
+                $this->response( $disp->row() , 200);
+
+            }else{
+
+                $this->response( [
+                    'status'=>FALSE,
+                    'message' => 'Não existe'
+                ], 200 );
+            }
+
+        }else{
+
+            $this->response( [
+                'result' => FALSE,
+                'message' => 'Informe o ID do dispositivo'
+            ], 400);
+
+        }
+    }
+
+    public function dispositivos_post(){
 
         if($this->input->get('dispId')){
 
@@ -113,8 +142,8 @@ class Index extends REST_Controller{
 
                 $saveArray = array('deviceUpdate'=> date('Y-m-d H:i:s') );
 
-                if($this->input->post('deviceStatus')){
-                    $saveArray['dispStatus'] = $this->input->post('deviceStatus');
+                if($this->input->post('dispStatus')){
+                    $saveArray['dispStatus'] = $this->input->post('dispStatus');
                 }
 
                 if($this->input->post('deviceNotifReg')){
@@ -207,6 +236,54 @@ class Index extends REST_Controller{
         }
     }
 
+    public function sendPush_post(){
+
+        // $arrayToSend = array(
+        //     'to' => $this->input->post('to'),
+        //     'data' => array(
+        //         'title'=>$this->input->post('title'),
+        //         'message'=>$this->input->post('message'),
+        //         'type'=>$this->input->post('type'),
+        //         'status'=>
+        //     ),
+        //     'priority'=>'high',
+        //     'sound'=>true
+        // );
+
+        $base = array(
+            'priority'=>'high',
+            'sound'=>true
+        );
+
+        $arrayToSend = array_merge($base,$this->input->post());
+
+        $data = json_encode($arrayToSend);
+        //FCM API end-point
+        $url = 'https://fcm.googleapis.com/fcm/send';
+        //api_key in Firebase Console -> Project Settings -> CLOUD MESSAGING -> Server key
+        $server_key = 'AAAAqyJULW8:APA91bEIHG6iEgTa_QApPC37PVzweRD7Hl-yLPvfCbwt5AlSrsIaAUlsltbg9RqhAb--tfv795qJRcTT9kZV3WJCz24_bd1tizJJMbRq2rCMUI30ICzNTA3FAsUG1K66-JxHfRQi9YlA';
+        //header with content_type api key
+        $headers = array(
+            'Content-Type:application/json',
+            'Authorization:key='.$server_key
+        );
+        //CURL request to route notification to FCM connection server (provided by Google)
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+        $result = curl_exec($ch);
+        if ($result === FALSE) {
+            die('Oops! FCM Send Error: ' . curl_error($ch));
+        }else{
+            return true;
+        }
+        curl_close($ch);
+    }
     
 
     public function empresas_get(){
@@ -246,7 +323,7 @@ class Index extends REST_Controller{
 
         if($this->input->post('empresaId')){
 
-            if(!$this->input->post('empresaNome') ){
+            if(!$this->input->post('empresaNomeRazao') ){
                 $this->response( [
                     'status' => FALSE,
                     'message' => 'Nome obrigatório'
@@ -255,7 +332,7 @@ class Index extends REST_Controller{
 
             
             $updateData = array(
-                'empresaNome'=>$this->input->post('empresaNome'),
+                'empresaNome'=>$this->input->post('empresaNomeRazao'),
                 'empresaCnpj'=>$this->input->post('empresaCnpj') 
             );
 
@@ -280,22 +357,26 @@ class Index extends REST_Controller{
 
         }else{
 
-            if(!$this->input->post('empresaNome') ){
+            if(!$this->input->post('empresaNomeRazao') ){
                 $this->response( [
                     'status' => FALSE,
                     'message' => 'Especifique ao menos o nome do cliente'
                 ], 400);
             }
            
-
             $insert = $this->db->insert('empresas', array(
-                'empresaNome'=>$this->input->post('empresaNome'),
+                'empresaNomeRazao'=>$this->input->post('empresaNomeRazao'),
                 'empresaCnpj'=>$this->input->post('empresaCnpj'),
-                'empresaPass'=>md5($this->input->post('empresaPass') ),
+                'empresaSenha'=>md5($this->input->post('empresaPass') ),
+                'empresaEmail'=>$this->input->post('empresaEmail'),
+                'empresaToken'=>md5($this->input->post('empresaNomeRazao')),
                 'empresaStatus'=>1
             ));
 
             if($insert){
+
+                $this->admin->AddBuckets($this->input->post('empresaCnpj'));
+                
                 $this->response( [
                     'status' => TRUE,
                     'message' => 'Empresa inserida'

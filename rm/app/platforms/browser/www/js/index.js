@@ -176,9 +176,9 @@ var app = {
             console.log(data.image);
             console.log(data.additionalData);
             navigator.notification.alert(
-                data.message,         // message
+                data.additionalData.message,         // message
                 null,                 // callback
-                data.title,           // title
+                data.additionalData.title,           // title
                 'Ok'                  // buttonName
             );
             

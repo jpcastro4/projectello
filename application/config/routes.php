@@ -53,6 +53,7 @@ $route['default_controller'] = "index";
 $route['404_override'] = '';
 // $route['translate_uri_dashes'] = FALSE;
 
+$rout['rs/admin'] = 'rs/index/admin';
 
 //REMOTE SALES
 $route['api/rs/clientes'] = 'api/rs/index/clientes';
@@ -63,4 +64,7 @@ $route['api/rs/pedidos/produtos'] = 'api/rs/index/pedidos_produtos';
 
 $route['api/rs/device'] = 'api/rs/index/device';
 $route['api/rs/homologa'] = 'api/rs/index/homologa';
+
+$route['api/rs/dispositivos'] = 'api/rs/index/dispositivos';
+$route['api/rs/sendPush'] = 'api/rs/index/sendPush';
 //API

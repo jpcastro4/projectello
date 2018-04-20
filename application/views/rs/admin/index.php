@@ -219,35 +219,33 @@
             <div class="container page active-page" id="devices">
                 <div class="row pt-4">
                     <div class="col-12 py-3">
-                        <h2>Lista de Dispositivos</h2>
+                        <h2>Lista de Empresas</h2>
+                    </div>
+                    <div class="col-12 py-3">
+                        <button class="btn btn-theme" data-toggle="modal" data-target="#add-empresa">Nova empresa</button>
                     </div>
                     <div class="col-12">
                          <div class="row py-2">
-                            <?php if(!empty($devices)): 
+                            <?php if(!empty($empresas)): 
                                 
-                                foreach ($devices as $device):
+                                foreach ($empresas as $empresa):
                                  
                                 ?>
 
-                                <!-- <div class="col col-3 m-1"> -->
-                                <div class="col col-3 card m-1" >
-                                    <!-- <img class="card-img-top" src="..." alt="Card image cap"> -->
-                                    <div class="card-block">
-                                        <h6 class="card-title"><?php echo $device->dispDeviceId ?></h6>
-                                        <p class="card-text">
-                                            <div class="col-12">
-                                                <div class="label">Status</div>
-                                                
-                                                <select class="form-control dispStatus" data-dispositivo="<?php echo $device->dispId ?>">
-                                                    <option value="null" >Aguardando</option>
-                                                    <option value="1" <?php echo ($device->dispStatus == 1)? 'selected': ''  ?> >Ativo</option>
-                                                    <option value="2" <?php echo ($device->dispStatus == 2)? 'selected': ''  ?> >Inativo</option>
-                                                    <option value="3" <?php echo ($device->dispStatus == 3)? 'selected': ''  ?>>Bloqueado</option>
-                                                </select>
-                                            </div>
-                                        </p>
+                                <div class="col col-3 m-1">
+                                    <div class="card" style="width: 20rem;">
+                                        <!-- <img class="card-img-top" src="..." alt="Card image cap"> -->
+                                        <div class="card-block">
+                                            <h5 class="card-title"><?php echo $empresa->empresaCnpj ?></h5>
+                                            <p class="card-text">
+                                               <div class="col-12 text-right">
+                                                   <a href="" class="btn btn-theme">Ver dispositivos</a>
+                                                </div>
+                                            </p>
+
+                                            <!-- <a href="#" class="btn btn-primary">Go somewhere</a> -->
+                                        </div>
                                     </div>
-                                <!-- </div> -->
                                 </div>
 
                             
@@ -506,44 +504,40 @@
             </div>
         </div>
 
-        <div class="modal fade" id="modal-novo-cliente" tabindex="-1" role="dialog" aria-labelledby="modal-novo-cliente" aria-hidden="true">
+        <div class="modal fade" id="add-empresa" tabindex="-1" role="dialog" aria-labelledby="add-empresa" aria-hidden="true">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
         
                     <div class="modal-header">
-                        <h5 class="modal-title pull-left">Novo cliente </h5>
+                        <h5 class="modal-title pull-left">Nova empresa </h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
 
                     <div class="modal-body">
-                        <form class="row" id="novo-cliente" action="clientes" method="POST">
+                        <form class="row" id="nova-empresa" action="empresas" method="POST">
                             <div class="form-group col-12">
                                 <label class="label">Nome ou Razão Social</label>
-                                <input class="form-control" type="text" name="clienteNomeRazao" required >
+                                <input class="form-control" type="text" name="empresaNomeRazao" required >
                             </div>
                             <div class="form-group col-6">
                                 <label class="label">CPF/CNPJ </label>
-                                <input class="form-control" type="text" name="clienteCpfCnpj">
-                            </div>
-                            <div class="form-group col-6">
-                                <label class="label">Telefone </label>
-                                <input class="form-control" type="text" name="clienteTelefone" required >
-                            </div>
-                            <div class="form-group col-6">
-                                <label class="label">Responsavel </label>
-                                <input class="form-control" type="text" name="clienteContato">
+                                <input class="form-control" type="text" name="empresaCnpj">
                             </div>
                             <div class="form-group col-6">
                                 <label class="label">E-mail </label>
-                                <input class="form-control" type="text" name="clienteEmail">
+                                <input class="form-control" type="text" name="empresaEmail">
+                            </div>
+                            <div class="form-group col-6">
+                                <label class="label">Senha de acesso </label>
+                                <input class="form-control" type="text" name="empresaPass">
                             </div>
                             
                         </form>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" id="novapesquisa" class="btn btn-theme" onclick="app.novoCliente()">Salvar</button>
+                        <button type="button" class="btn btn-theme" onclick="app.empresaInsert()">Salvar</button>
                         <button type="button" class="btn btn-link" data-dismiss="modal">Cancelar</button>
                     </div>
         
