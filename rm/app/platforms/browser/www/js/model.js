@@ -99,31 +99,13 @@ var model = {
         })
 
     },
-    setupPush: function () {
+    htmlLog: function(log){
 
-        const push = PushNotification.init({
-            android: {
-            },
-            browser: {
-                pushServiceURL: 'http://localhost:3000'
-            }
-        })
-
-        return push
+        $('.page').not('.hidden').append('<div class="">'+JSON.stringify(log)+'</div>')
     },
-
-    tokenFCM: function () {
-
-        const push = this.setupPush()
-
-        push.on('registration', (data) => {
-            registrationID = data.registrationId
-        });
-
-
-    },
- 
     get_device: function () {
+
+        M.toast({ html: 'Abrindo tunel' })
 
         model.loading('open')
 
@@ -135,6 +117,9 @@ var model = {
             return 
         }
 
+        M.toast({ html: 'Conexão ativa' })
+
+
         var dados = $('#form-homologa').serializeJSON()
 
         if (dados.empresaCnpj == null) {
@@ -144,37 +129,41 @@ var model = {
 
         var params = '/?deviceId=' + deviceID + '&empresaCnpj=' + dados.empresaCnpj
         
-        this.ajax('get', 'device'+params, '', function(res){
+        M.toast({ html: 'Abrindo API DEVICE GET deviceId=' + deviceID + ' empresaCnpj=' + dados.empresaCnpj })
 
+        this.ajax('get', 'device'+params, '', function(res){
+            model.htmlLog(res)
             if(res.error){
                 console.log(res.data)
-
+                
                 M.toast({ html: res.data.responseJSON.message })
                 if(res.data.status == 400 ){
                     localStorage.setItem('homologaStatus', res.data.responseJSON.status)
                 }
-                
                                                 
             }else{
                 console.log(res )
-
+                                
                 if(res.status == null ){
                     model.homologa()
                 }else{
-                    localStorage.setItem('homologaStatus',res.homologa)
+                    localStorage.setItem('homologaStatus',res.status)
                 }
 
                 M.toast({ html: res.message })
                 model.loading('close')
+
+
                 
             }
         })     
 
-    },
-    
+    },   
 
     homologa: function(){        
         model.loading('open') 
+
+        M.toast({ html: 'Iniciando homologação' })
 
         console.log('Internet ' + this.connection())
 
@@ -190,30 +179,45 @@ var model = {
             M.toast({ html: 'Informe o CNPJ por favor' })
             return
         }
-        
-        this.tokenFCM()
 
-        var post = { deviceId: deviceID, deviceNotifReg: registrationID, empresaCnpj: dados.empresaCnpj }
+        M.toast({ html: 'Abrindo API DEVICE POST' + localStorage.getItem('registrationId') })
+        
+        var post = { deviceId: deviceID, deviceNotifReg: localStorage.getItem('registrationId'), empresaCnpj: dados.empresaCnpj }
 
             this.ajax('post','homologa',post , function(res){
-                
+                model.htmlLog(res)
                 if (res.error) {
 
                     console.log(res.data)     
+                    model.htmlLog(res.data)
 
                     M.toast({ html: res.data.responseJSON.message })
                     model.loading('close')
                         
                 } else {
                     console.log(res)
-
+                    model.htmlLog(res)
+                    localStorage.setItem('dispId',res.dispId)
                     M.toast({ html: res.message })
                     model.loading('close')
-                    
                 }
 
             })
         
+    },
+
+    refreshToken: function(){
+
+        this.ajax('post', 'device/?dispId=' + localStorage.getItem('dispId'), { deviceNotifReg : registrationID }, function(res){
+
+            if(res.error){
+                console.log(res)
+                alert('Erro na autenticação')
+                M.toast({ html: 'Erro na autenticação Refresh' })
+            }else{
+                console.log(res.message)
+            }
+        })
     },
 
     //AREA DE PRODUTOS

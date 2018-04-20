@@ -12,27 +12,7 @@ class Index extends REST_Controller{
     }
 
     public function index_get(){
-
-    	// if(!$this->get('id') ){
-
-    	//  	$this->response( [
-        //             'status' => FALSE,
-        //             'message' => 'Insert id bank to return item'
-        //         ], 404);
-    	// }
-
-    	// $userId = $this->get('id');
-
-    	// $this->db->where('id',$userId);
-    	// $user = $this->db->get('usuarios')->row();
-
-    	// $this->db->where('id_usuario',$userId);
-    	// $niveis = $this->db->get('usuarios_nivel')->row();
-
-    	// $result = $user + $nives;
-
-        // $this->response($result, 200);
-        
+         
         $this->response('API Remote Sales Difference', 200);
     }
 
@@ -57,7 +37,7 @@ class Index extends REST_Controller{
                 $this->response( [
                     'status' => FALSE,
                     'message' => 'Empresa inexistente'
-                ], 405);
+                ], 400);
             }
 
             $this->db->where( array('dispDeviceId'=>$this->input->get('deviceId'), 'empresaId'=>$empresaId ));
@@ -117,7 +97,7 @@ class Index extends REST_Controller{
             $this->response( [
                 'result' => FALSE,
                 'message' => 'Device não identificado'
-            ], 405);
+            ], 400);
 
         }
     }

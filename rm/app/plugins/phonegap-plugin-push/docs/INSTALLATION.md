@@ -18,9 +18,8 @@
   - [CocoaPods](#cocoapods)
     - [Common CocoaPod Installation issues](#common-cocoapod-installation-issues)
     - [CocoaPod Disk Space](#cocoapod-disk-space)
-    - [Library not found for -lPods-Appname](#library-not-found-for--lpods-appname)
-    - [Library not found for -lGoogleToolboxForMac](#library-not-found-for--lgoogletoolboxformac)
-    - [Module FirebaseInstanceID not found](#module-firebaseinstanceid-not-found)
+    - [Library not found for -lPods-Appname](#library-not-found-for--lPods-Appname)
+    - [Library not found for -lGoogleToolboxForMac](#library-not-found-for--lPods-Appname)
 - [Additional Resources](#additional-resources)
 
 ## Installation Requirements
@@ -56,15 +55,7 @@ cordova plugin add https://github.com/phonegap/phonegap-plugin-push
 
 As of version 2.0.0 the SENDER_ID parameter has been removed at install time. Instead you put your google-services.json (Android) and/or GoogleService-Info.plist in the root folder of your project and then add the following lines into your config.xml.
 
-In the platform tag for Android add the following resource-file tag if you are using cordova-android 7.0 or greater:
-
-```
-<platform name="android">
-  <resource-file src="google-services.json" target="app/google-services.json" />
-</platform>
-```
-
-If you are using cordova-android 6.x or earlier, add the following resource-file tag:
+In the platform tag for Android add the resource-file tag:
 
 ```
 <platform name="android">
@@ -72,7 +63,7 @@ If you are using cordova-android 6.x or earlier, add the following resource-file
 </platform>
 ```
 
-By default, on iOS, the plugin will register with APNS. If you want to use FCM on iOS, in the platform tag for iOS add the resource-file tag:
+In the platform tag for iOS add the resource-file tag:
 
 ```
 <platform name="ios">
@@ -100,11 +91,12 @@ By default, on iOS, the plugin will register with APNS. If you want to use FCM o
 
 ### Compilation
 
-As of version 2.1.0 the plugin has been switched to using pinned version of Gradle libraries. You will need to ensure that you have installed the following items through the Android SDK Manager:
+As of version 2.0.0 the plugin has been switched to using pinned version of Gradle libraries. You will need to ensure that you have installed the following items through the Android SDK Manager:
 
-- Android Support Repository version 47+
+- Android Support Library version 25.1.0
+- FirebaseMessaging Library version 9.8.0
 
-![android support library](https://user-images.githubusercontent.com/353180/33042340-7ea60aaa-ce0f-11e7-99f7-4631e4c3d7be.png)
+![android support library](https://cloud.githubusercontent.com/assets/353180/10230226/0627931e-684a-11e5-9a6b-72d72997f655.png)
 
 For more detailed instructions on how to install the Android Support Library visit [Google's documentation](https://developer.android.com/tools/support-library/setup.html).
 
@@ -336,21 +328,6 @@ ld: library not found for -lGoogleToolboxForMac
 ```
 
 Workarounds are to add the platform first and install the plugins later, or to manually run pod install on projectName/platforms/ios.
-
-##### Module FirebaseInstanceID not found
-
-If you run into an error like:
-
-```
-module FirebaseInstanceID not found
-```
-
-You may be running into a bug in cordova-ios. The current workaround is to run `pod install` manually.
-
-```
-cd platforms/ios
-pod install
-```
 
 ## Additional Resources
 

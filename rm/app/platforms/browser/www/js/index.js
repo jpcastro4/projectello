@@ -8,8 +8,8 @@ var localDb = null
 var historico = []
 var registrationID = null //localStorage.getItem('registrationId')
 var deviceID = null //localStorage.getItem('deviceID')
-//var url = 'https://ellobeta.com/api/rs/'
-var url = 'http://localhost/ellobeta/api/rs/'
+var url = 'https://ellobeta.com/api/rs/'
+//var url = 'http://localhost/ellobeta/api/rs/'
 
 //const pluralize = (count, noun, sSuffix = '', pSuffix = 's') => (count != 1) ? noun + pSuffix : noun + sSuffix
 
@@ -28,7 +28,7 @@ var app = {
                 
     },
     onDeviceReady: function () {
-        document.addEventListener("online", model.connection, false);
+        //document.addEventListener("online", model.connection, false);
        
         var attachFastClick = Origami.fastclick
         attachFastClick(document.body)
@@ -47,30 +47,8 @@ var app = {
                 
             }
 
-            PushNotification.hasPermission(data => {
-                if (data.isEnabled) {
-                    console.log('isEnabled');
-                }
-            });
-
-            const push = PushNotification.init({
-                android: {
-                },
-                browser: {
-                }
-            })
-
-            push.on('notification', data => {
-                console.log(data.message);
-                console.log(data.title);
-                console.log(data.count);
-                console.log(data.sound);
-                console.log(data.image);
-                console.log(data.additionalData);
-            });
-
+            app.setupPush();
             app.initializeEls()
-
         }
         
 
@@ -152,6 +130,59 @@ var app = {
         $('.modal#busca-produtos').on('show.bs.modal', function (e) {
 
         })
+    },
+    setupPush: function () {
+        console.log('calling push init');
+        var push = PushNotification.init({
+            "android": {
+            },
+            "browser": {},
+            "ios": {
+                "sound": true,
+                "vibration": true,
+                "badge": true
+            },
+            "windows": {}
+        });
+        console.log('after init');
+
+        push.on('registration', function (data) {
+            console.log('registration event: ' + data.registrationId);
+
+            var oldRegId = localStorage.getItem('registrationId');
+             
+            if (oldRegId !== data.registrationId) {
+                 
+                registrationID = data.registrationId
+                localStorage.setItem('registrationId', data.registrationId)
+                 
+                if (oldRegId !== null ) {
+                    model.refreshToken()
+                }
+                 
+            }
+        });
+
+        push.on('error', function (e) {
+            console.log("push error = " + e.message);
+        });
+
+        push.on('notification', function (data) {
+            console.log('NOTIFICAÇÃO CHEGANDO');
+            console.log(data.message);
+            console.log(data.title);
+            console.log(data.count);
+            console.log(data.sound);
+            console.log(data.image);
+            console.log(data.additionalData);
+            navigator.notification.alert(
+                data.message,         // message
+                null,                 // callback
+                data.title,           // title
+                'Ok'                  // buttonName
+            );
+            
+        });
     }
     
 }
@@ -242,62 +273,5 @@ var init = {
         
     },  
           
-};
- 
-
-
- 
-
-// // setupPush: function() {
-//     //     console.log('calling push init');
-//     //     var push = PushNotification.init({
-//     //         "android": {
-//     //             "senderID": "987461923211"
-//     //         },
-//     //         "browser": {},
-//     //         "ios": {
-//     //             "sound": true,
-//     //             "vibration": true,
-//     //             "badge": true
-//     //         },
-//     //         "windows": {}
-//     //     });
-//     //     console.log('after init');
-
-//     //     push.on('registration', function(data) {
-//     //         console.log('registration event: ' + data.registrationId);
-
-//     //         var oldRegId = localStorage.getItem('registrationId');
-//     //         if (oldRegId !== data.registrationId) {
-//     //             // Save new registration ID
-//     //             localStorage.setItem('registrationId', data.registrationId);
-//     //             // Post registrationId to your app server as the value has changed
-//     //         }
-
-//     //         var parentElement = document.getElementById('registration');
-//     //         var listeningElement = parentElement.querySelector('.waiting');
-//     //         var receivedElement = parentElement.querySelector('.received');
-
-//     //         listeningElement.setAttribute('style', 'display:none;');
-//     //         receivedElement.setAttribute('style', 'display:block;');
-//     //     });
-
-//     //     push.on('error', function(e) {
-//     //         console.log("push error = " + e.message);
-//     //     });
-
-//     //     push.on('notification', function(data) {
-//     //         console.log('notification event');
-//     //         navigator.notification.alert(
-//     //             data.message,         // message
-//     //             null,                 // callback
-//     //             data.title,           // title
-//     //             'Ok'                  // buttonName
-//     //         );
-//     //    });
-//     // }
-
-
-
-
+}
 
