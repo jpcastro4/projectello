@@ -65,11 +65,11 @@ var model = {
     loading: function (action) {
 
         if (action == 'open') {
-            $('.loading').removeClass('hidden')
+            $('.loading').removeClass('hidden').show()
         }
 
         if (action == 'close') {
-            $('.loading').addClass('hidden')
+            $('.loading').addClass('hidden').hide()
         }
 
     },
@@ -103,9 +103,8 @@ var model = {
 
         $('.page').not('.hidden').append('<div class="">'+JSON.stringify(log)+'</div>')
     },
-    get_device: function () {
 
-        M.toast({ html: 'Abrindo tunel' })
+    homologa: function () {
 
         model.loading('open')
 
@@ -113,12 +112,8 @@ var model = {
             
             M.toast({ html: 'Verifique a internet' })
             model.loading('close')
-
             return 
         }
-
-        M.toast({ html: 'Conexão ativa' })
-
 
         var dados = $('#form-homologa').serializeJSON()
 
@@ -127,12 +122,13 @@ var model = {
             return
         }
 
+
+        localStorage.setItem('empresaCnpj',dados.empresaCnpj)
+
         var params = '/?deviceId=' + deviceID + '&empresaCnpj=' + dados.empresaCnpj
         
-        M.toast({ html: 'Abrindo API DEVICE GET deviceId=' + deviceID + ' empresaCnpj=' + dados.empresaCnpj })
-
-        this.ajax('get', 'device'+params, '', function(res){
-            model.htmlLog(res)
+        this.ajax('get', 'homologa'+params, '', function(res){
+             
             if(res.error){
                 console.log(res.data)
                 
@@ -143,24 +139,21 @@ var model = {
                                                 
             }else{
                 console.log(res )
-                                
+                M.toast({ html: res.message })
                 if(res.status == null ){
-                    model.homologa()
+                    model.execHomologa()
                 }else{
                     localStorage.setItem('homologaStatus',res.status)
                 }
-
-                M.toast({ html: res.message })
+                
                 model.loading('close')
 
-
-                
             }
         })     
 
     },   
 
-    homologa: function(){        
+    execHomologa: function(){        
         model.loading('open') 
 
         M.toast({ html: 'Iniciando homologação' })
@@ -179,8 +172,6 @@ var model = {
             M.toast({ html: 'Informe o CNPJ por favor' })
             return
         }
-
-        M.toast({ html: 'Abrindo API DEVICE POST' + localStorage.getItem('registrationId') })
         
         var post = { deviceId: deviceID, deviceNotifReg: localStorage.getItem('registrationId'), empresaCnpj: dados.empresaCnpj }
 
@@ -189,21 +180,19 @@ var model = {
                 if (res.error) {
 
                     console.log(res.data)     
-                    model.htmlLog(res.data)
-
+                    
                     M.toast({ html: res.data.responseJSON.message })
                     model.loading('close')
                         
                 } else {
                     console.log(res)
-                    model.htmlLog(res)
+ 
                     localStorage.setItem('dispId',res.dispId)
                     M.toast({ html: res.message })
                     model.loading('close')
                 }
 
             })
-        
     },
 
     refreshToken: function(){
@@ -219,6 +208,45 @@ var model = {
             }
         })
     },
+
+    executePush: function(data){
+
+        var type = data.type
+        
+        switch (type) {
+            case 'switchStatus':
+                model.switchStatus(data)
+                break;
+        
+            default:
+                break;
+        }
+    },
+
+    switchStatus: function(data){
+
+        localStorage.setItem('homologaStatus', data.status)
+        controller.pageHomologacao()
+
+    },
+
+
+    syncBD: function(){
+        
+        app.ajax('post','base?empresaCnpj='+localStorage.getItem('empresaCnpj'),'', function(res){
+
+            console.log(res)
+        })
+
+    },
+
+
+
+
+
+
+
+
 
     //AREA DE PRODUTOS
     pageProdutos: function () {

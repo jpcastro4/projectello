@@ -12,18 +12,17 @@ class Rs extends CI_Controller {
     }
    
     public function index(){
-        $this->native_session->set('user_id',1);
-        // $this->native_session->unset_userdata('user_id');
-        // $this->native_session->unset_userdata('superuser');
-        // $this->native_session->unset_userdata('conta_id');
-        // $this->native_session->unset_userdata('fb_access_token');
-        // if(!$this->native_session->get('user_id')){
 
-        //     redirect('rs/login');
-        // }
+        //$this->native_session->set('user_id',1);
+        
         $data['devices'] = $this->admin->ListaDispositivos();
         $this->load->view('rs/index',$data);
-         
+    }
+
+    public function switchClient($empresaId){
+
+        $this->native_session->set('user_id',$empresaId);
+        redirect('rs/admin/dispositivos');
     }
 
     public function admin(){
@@ -31,7 +30,26 @@ class Rs extends CI_Controller {
         $data['empresas'] = $this->admin->ListaEmpresas();
 
         $this->load->view('rs/admin/index',$data);
-    }   
+    } 
+
+    public function admin_dispositivos(){
+
+        $data['devices'] = $this->admin->ListaDispositivos();
+        $this->load->view('rs/admin/dispositivos',$data);
+    }
+
+
+
+
+
+
+
+
+
+
+
+    
+
     
     private function authFirebase(){
 
@@ -44,6 +62,11 @@ class Rs extends CI_Controller {
         $auth = $firebase->getAuth();
     }
     
+    public function converte(){
+
+        $this->admin->CsvToJson(base_url('temp/representantes.csv'));
+    }
+
     public function noti(){
 
         //echo $this->admin->notificacoes();

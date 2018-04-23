@@ -27,27 +27,27 @@ var controller = {
          
         model.loading('open')
 
-        if (localStorage.getItem('homologaStatus') == 2) {
+        if (localStorage.getItem('homologaStatus') == 1 || localStorage.getItem('homologaStatus') == null ) {
 
             model.loading('close')
+            model.openPage('homologacao')
+        }
+
+        if (localStorage.getItem('homologaStatus') == 2) {
+            
+            model.loading('close')
+            model.syncBD()
             model.openPage('login')
         }
-  
-        setInterval(() => {
 
-            if(localStorage.getItem('homologaStatus') == 2 ){
+        if (localStorage.getItem('homologaStatus') == 3) {
 
-                model.loading('close')
-                model.openPage('login')
-            }
-            
-            // if (localStorage.getItem('homologaStatus') == 1){
-            //     model.get_device()
-            // }
+            model.loading('close')
+            model.openPage('homologacao')
+        }
 
-            
-        }, 2000);
-
+        
+   
     },
     pagePedidos: function () {
 

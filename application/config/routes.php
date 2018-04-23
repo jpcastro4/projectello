@@ -53,9 +53,20 @@ $route['default_controller'] = "index";
 $route['404_override'] = '';
 // $route['translate_uri_dashes'] = FALSE;
 
-$rout['rs/admin'] = 'rs/index/admin';
+//ADMIN
+$route['rs/admin'] = 'rs/admin';
+$route['rs/admin/dispositivos'] = 'rs/admin_dispositivos';
 
-//REMOTE SALES
+
+//CLIENT
+
+
+
+//API
+$route['api/rs/homologa'] = 'api/rs/index/homologa';
+
+$route['api/rs/dispositivos'] = 'api/rs/index/dispositivos';
+
 $route['api/rs/clientes'] = 'api/rs/index/clientes';
 $route['api/rs/produtos'] = 'api/rs/index/produtos';
 $route['api/rs/empresas'] = 'api/rs/index/empresas';
@@ -64,9 +75,8 @@ $route['api/rs/pedidos/produtos'] = 'api/rs/index/pedidos_produtos';
 
 $route['api/rs/upload'] = 'api/rs/index/base';
 
-$route['api/rs/device'] = 'api/rs/index/device';
-$route['api/rs/homologa'] = 'api/rs/index/homologa';
+$route['api/rs/base'] = 'api/rs/index/base';
 
-$route['api/rs/dispositivos'] = 'api/rs/index/dispositivos';
+
+
 $route['api/rs/sendPush'] = 'api/rs/index/sendPush';
-//API

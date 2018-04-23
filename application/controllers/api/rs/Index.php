@@ -8,7 +8,6 @@ class Index extends REST_Controller{
         header("Access-Control-Allow-Methods: GET, POST, OPTIONS, PUT, DELETE");
 
         $this->load->model('Rsadmin_model', 'admin');
-        
     }
 
     public function index_get(){
@@ -16,7 +15,7 @@ class Index extends REST_Controller{
         $this->response('API Remote Sales Difference', 200);
     }
 
-    public function device_get(){
+    public function homologa_get(){
 
         if($this->input->get('deviceId')){
 
@@ -31,7 +30,6 @@ class Index extends REST_Controller{
 
             if($empresa){
                 $empresaId = $empresa->empresaId;
-
             }else{
 
                 $this->response( [
@@ -39,14 +37,14 @@ class Index extends REST_Controller{
                     'message' => 'Empresa inexistente'
                 ], 400);
             }
-
+            
             $this->db->where( array('dispDeviceId'=>$this->input->get('deviceId'), 'empresaId'=>$empresaId ));
             $disp = $this->db->get('dispositivos');
 
             if($disp->num_rows() > 0){
 
-                if($disp->row()->dispStatus == 1 ){
-                    
+                if($disp->row()->dispStatus == 0 ){
+
                     $this->response( [
                         'result' => TRUE,
                         'status'=>1,
@@ -54,7 +52,7 @@ class Index extends REST_Controller{
                     ], 200);
                 }
 
-                if($disp->row()->dispStatus == 2 ){
+                if($disp->row()->dispStatus == 1 ){
 
                     $this->response( [
                         'result' => TRUE,
@@ -65,22 +63,22 @@ class Index extends REST_Controller{
                     ], 200);                    
                 }
 
-                if($disp->row()->dispStatus == 3 ){
+                if($disp->row()->dispStatus == 2 ){
 
                     $this->response( [
                         'result' => TRUE,
                         'status'=>3,
                         'message' => 'Dispositivo inativo'
-                    ], 400);                    
+                    ], 400);
                 }
                 
-                if($disp->row()->dispStatus == 4 ){
+                if($disp->row()->dispStatus == 3 ){
 
                     $this->response( [
                         'result' => FALSE,
                         'status'=>5,
                         'message' => 'Dispositivo bloqueado'
-                    ], 400);                    
+                    ], 400);
                 }
 
             }else{
@@ -98,7 +96,58 @@ class Index extends REST_Controller{
                 'result' => FALSE,
                 'message' => 'Device não identificado'
             ], 400);
+        }
+    }
 
+    public function homologa_post(){
+
+        if($this->input->post('empresaCnpj')){
+
+            $this->db->where('empresaCnpj',$this->input->post('empresaCnpj'));
+            $res = $this->db->get('empresas');
+
+            if($res->num_rows() > 0 ){
+
+                $empresaId = $res->row()->empresaId;
+
+                $save = $this->db->insert('dispositivos',
+                    array(
+                        'dispDeviceId'=>$this->input->post('deviceId'),
+                        'dispNotifId'=>$this->input->post('deviceNotifReg'),
+                        'empresaId'=>$empresaId,
+                        'dispStatus'=>1,
+                        'deviceUpdate'=> date('Y-m-d H:i:s')
+                    )
+                );
+
+                if($save){
+
+                   $this->response( [
+                        'status' => TRUE,
+                        'empresaId'=>$empresaId,
+                        'dispId'=>$this->db->insert_id(),
+                        'message' => 'Homologação solicitada'
+                    ], 200);
+
+                }else{
+                    $this->response( [
+                        'status' => FALSE,
+                        'message' => 'Erro na homologação'
+                    ], 404);
+                }
+                
+            }else{
+
+                $this->response( [
+                    'status' => FALSE,
+                    'message' => 'Empresa não encontrada'
+                ], 400);               
+            }
+        }else{
+            $this->response( [
+                'status' => FALSE,
+                'message' => 'Informe o CNPJ'
+            ], 400);
         }
     }
 
@@ -184,57 +233,7 @@ class Index extends REST_Controller{
         }
     }
 
-    public function homologa_post(){
-
-        if($this->input->post('empresaCnpj')){
-
-            $this->db->where('empresaCnpj',$this->input->post('empresaCnpj'));
-            $res = $this->db->get('empresas');
-
-            if($res->num_rows() > 0 ){
-
-                $empresaId = $res->row()->empresaId;
-
-                $save = $this->db->insert('dispositivos',
-                    array(
-                        'dispDeviceId'=>$this->input->post('deviceId'),
-                        'dispNotifId'=>$this->input->post('deviceNotifReg'),
-                        'empresaId'=>$empresaId,
-                        'dispStatus'=>1,
-                        'deviceUpdate'=> date('Y-m-d H:i:s')
-                    )
-                );
-
-                if($save){
-
-                   $this->response( [
-                        'status' => TRUE,
-                        'empresaId'=>$empresaId,
-                        'dispId'=>$this->db->insert_id(),
-                        'message' => 'Homologação solicitada'
-                    ], 200);
-
-                }else{
-                    $this->response( [
-                        'status' => FALSE,
-                        'message' => 'Erro na homologação'
-                    ], 404);
-                }
-                
-            }else{
-
-                $this->response( [
-                    'status' => FALSE,
-                    'message' => 'Empresa não encontrada'
-                ], 400);               
-            }
-        }else{
-            $this->response( [
-                'status' => FALSE,
-                'message' => 'Informe o CNPJ'
-            ], 400);
-        }
-    }
+    
 
     public function sendPush_post(){
 
@@ -249,6 +248,9 @@ class Index extends REST_Controller{
         //     'priority'=>'high',
         //     'sound'=>true
         // );
+        
+        
+        
 
         $base = array(
             'priority'=>'high',
@@ -256,6 +258,7 @@ class Index extends REST_Controller{
         );
 
         $arrayToSend = array_merge($base,$this->input->post());
+        //$this->response( $arrayToSend, 200);
 
         $data = json_encode($arrayToSend);
         //FCM API end-point
@@ -278,9 +281,16 @@ class Index extends REST_Controller{
         curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
         $result = curl_exec($ch);
         if ($result === FALSE) {
-            die('Oops! FCM Send Error: ' . curl_error($ch));
+            //die('Oops! FCM Send Error: ' . curl_error($ch));
+            $this->response( [
+                'status' => FALSE,
+                'message' => 'Erro push '. curl_error($ch)
+            ], 400);
         }else{
-            return true;
+            $this->response([
+                'status' => TRUE,
+                'message' => 'Push enviado'
+            ], 200);
         }
         curl_close($ch);
     }
@@ -290,16 +300,26 @@ class Index extends REST_Controller{
 
         if($this->input->get('empresaCnpj')){
 
+            if(!$this->input->post('baseFileName') ){
+                $this->response( [
+                    'status' => FALSE,
+                    'message' => 'Indique a tabela'
+                ], 400);
+            }   
+
             $this->db->where('empresaCnpj',$this->input->get('empresaCnpj'));
             $result = $this->db->get('empresas');
             
             if($result->num_rows() > 0 ){
 
-                $upload = $this->admin->uploadFile();
+                $upload = $this->admin->uploadFile($this->input->post('baseFileName'));
                 
                 if($upload){
 
-                    $this->response( $upload , 200);
+                    $this->response([
+                        'status' => TRUE,
+                        'message' => 'Tabela enviada'
+                    ], 200);
 
                 }else{
                     $this->response( [
@@ -322,6 +342,59 @@ class Index extends REST_Controller{
                 'status' => FALSE,
                 'message' => 'Especifique a empresa'
             ], 400);
+        }
+    }
+
+    public function base_get(){
+
+        if($this->input->get('empresaCnpj')){
+
+            $this->db->where('empresaCnpj',$this->input->get('empresaCnpj'));
+            $result = $this->db->get('empresas');
+
+            if($result->num_rows() > 0 ){
+
+                $path = base_url('base/'.$this->input->get('empresaCnpj').'/');
+
+                $base = array();
+
+                $representantes = file_exists($path.'representantes.json');
+                $clientes = file_exists($path.'clientes.json');
+                $produtos = file_exists($path.'produtos.json');
+                               
+                if($representantes){
+                    $base['representantes'] = json_decode(file_get_contents($path.'representantes.json'));
+                }
+
+                if($clientes){
+                    $base['clientes'] = json_decode(file_get_contents($path.'clientes.json'));
+                }
+
+                if($produtos){
+                    $base['produtos'] = json_decode(file_get_contents($path.'produtos.json'));
+                }
+
+                $this->response( [
+                    'content'=>$representantes,
+                    'status' => TRUE,
+                    'message' => 'Sincronizando base'
+                ], 200);
+                
+            }else{
+
+                $this->response( [
+                    'status' => FALSE,
+                    'message' => 'Empresa inexistente'
+                ], 404);
+            }
+
+        }else{
+
+            $this->response( [
+                'status' => FALSE,
+                'message' => 'Especifique a empresa'
+            ], 400);
+
         }
     }
     public function empresas_get(){

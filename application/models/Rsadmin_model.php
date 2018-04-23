@@ -224,7 +224,7 @@ class Rsadmin_model extends CI_Model{
         return false;
     }
 
-    public function uploadFile(){
+    public function uploadFile($tabela){
         
         $config['upload_path'] = './temp/';
         $config['allowed_types'] = 'csv';
@@ -236,27 +236,24 @@ class Rsadmin_model extends CI_Model{
             
             $error = array('error' => $this->upload->display_errors());
             return $error;
-         
         }
         else
         {  
 
             $data = $this->upload->data();
- 
-            $return = $this->CsvToJson( $data['full_path']);
+            $return = $this->CsvToJson( $data['full_path'],$tabela);
 
             return $return;
-            // if($return){
-            //     return true;
-            // }else{
-
-            //     return false;
-            // }
+            if($return){
+                return true;
+            }else{
+                return false;
+            }
 
         }
     }
 
-    private function CsvToJson($file_path){
+    public function CsvToJson($file_path,$filename){
 
         $filepath = $file_path;
         $lines = file($filepath);
@@ -266,60 +263,38 @@ class Rsadmin_model extends CI_Model{
 
         foreach ($lines as $index => $line)
         {
-            if ($index === 0)
-            {
-                # this is the header line
-                $headers = str_getcsv($line,';');
+            if ($index === 0){
+
+                $headers = (array) str_getcsv($line,';');
             }
             else
             {
-                $data = str_getcsv($line);
+                $data = (array) str_getcsv($line,';');
                 $obj = new stdClass();
-                foreach ($headers as $index => $header)
-                {
+
+                foreach ($headers as $index => $header){
+                   
                     $obj->$header = $data[$index];
                 }
                 $dataObjects[] = $obj;
             }
         }
 
-
-        // $file_handle = fopen($file_path, "r");
-
-        // $result = array();
-
-        // $hd = array();
-
-        // if ($file_handle !== FALSE) {
-
-        //     $column_headers = fgetcsv($file_handle, '', ','); 
-        //     foreach($column_headers as $header) {
-        //             $hd[] = $header;
-
-        //     }
-        //     // while (($data = fgetcsv($file_handle)) !== FALSE) {
-        //     //     $i = 0;
-        //     //     foreach($hd as $column) {
-        //     //             $result[$column] = $data[$i++];
-        //     //     }
-        //     // }
-        //     fclose($file_handle);
-        // }
-
-        // print_r($result); // I see all data(s) except the header
-
-        return json_encode($dataObjects);
-
-        // $dir = './base/'.$this->input->get('empresaCnpj');
+        $dir = './base/'.$this->input->get('empresaCnpj');
         
-        // if(file_exists($dir)){
+        if(!file_exists($dir)){
+            mkdir($dir);
+            fopen($dir.'/index.html', 'w');
+        }
 
-        // }else{
-        //     mkdir($dir);
-        // }
-            
-        // return $data;
-
+        $fp = fopen($dir.'/'.$filename.'.json', 'w');
+        $write = fwrite($fp, json_encode($dataObjects));
+        fclose($fp);
+        
+        if($write){
+            return true;
+        }else{
+            return false;
+        }
     }
- 
 }

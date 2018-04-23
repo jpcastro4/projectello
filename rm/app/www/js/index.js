@@ -8,8 +8,8 @@ var localDb = null
 var historico = []
 var registrationID = null //localStorage.getItem('registrationId')
 var deviceID = null //localStorage.getItem('deviceID')
-var url = 'https://ellobeta.com/api/rs/'
-//var url = 'http://localhost/ellobeta/api/rs/'
+//var url = 'https://ellobeta.com/api/rs/'
+var url = 'http://localhost/ellobeta/api/rs/'
 
 //const pluralize = (count, noun, sSuffix = '', pSuffix = 's') => (count != 1) ? noun + pSuffix : noun + sSuffix
 
@@ -47,6 +47,7 @@ var app = {
                 
             }
 
+            
             app.setupPush();
             app.initializeEls()
         }
@@ -89,7 +90,7 @@ var app = {
         //localStorage.setItem('empresaId', 1)
 
         M.AutoInit();
-        controller.initPages()
+        controller.initPages() 
 
         $('.menu-login').dropdown({
             alignment:'right',
@@ -105,8 +106,7 @@ var app = {
 
         $('#form-homologa').on('submit', function(e){
             e.preventDefault();
-            model.get_device()
-            
+            model.homologa()   
         })
 
         $('#save-prod').on('click', function (e) {
@@ -168,22 +168,12 @@ var app = {
         });
 
         push.on('notification', function (data) {
-            console.log('NOTIFICAÇÃO CHEGANDO');
-            console.log(data.message);
-            console.log(data.title);
-            console.log(data.count);
-            console.log(data.sound);
-            console.log(data.image);
-            console.log(data.additionalData);
-            navigator.notification.alert(
-                data.additionalData.message,         // message
-                null,                 // callback
-                data.additionalData.title,           // title
-                'Ok'                  // buttonName
-            );
             
+            model.executePush(data)
+ 
         });
     }
+    
     
 }
 

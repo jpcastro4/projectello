@@ -133,9 +133,9 @@ var app = {
         }
     },
 
-    sendPush: function(infos){
+    switchStatus: function(infos){
         
-        this.ajax('get','dispositivos?dispId='+infos.dispId,'', function(rs){
+        app.ajax('get','dispositivos?dispId='+infos.dispId,'', function(rs){
 
             if(rs.status == false){
                 console.log('erro')
@@ -144,14 +144,23 @@ var app = {
 
                 var data = {
                     title: 'Remote Sales',
-                    message: 'Dispositivo liberado',
-                    type: 'homologacao',
+                    type: 'switchStatus',
                     status: rs.dispStatus
                 }
 
+                if(rs.dispStatus == null ){
+                    data.message = 'Dispositivo aguardando'
+                }else if(rs.dispStatus == 1 ){
+                    data.message = 'Dispositivo liberado'
+                } else if (rs.dispStatus == 2) {
+                    data.message = 'Dispositivo inativo'
+                } else if (rs.dispStatus == 3) {
+                    data.message = 'Dispositivo bloqueado'
+                }
+                
                 console.log('enviando push')
                 
-                this.ajax('post', 'sendPush', { to: rs.dispNotifId, data: data }, function (res) {
+                app.ajax('post', 'sendPush', { to: rs.dispNotifId, data: data }, function (res) {
                     console.log(res)
 
                 })
@@ -165,10 +174,10 @@ var app = {
 
         var dispId = el.data('dispositivo'), status = el.val()
 
-        this.ajax('post','dispositivos?dispId='+dispId,{dispStatus:status}, function(res){
+        app.ajax('post','dispositivos?dispId='+dispId,{dispStatus:status}, function(res){
 
             if(res.status == true){
-                app.sendPush({ dispId: dispId, dispStatus: status })
+                app.switchStatus({ dispId: dispId, dispStatus: status })
             }
         })
 
