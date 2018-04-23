@@ -1,6 +1,7 @@
 {
     "name": "application/ellobeta",
     "require": {
+        "aws/aws-sdk-php": "^3.54"
     },
     "authors": [
         {

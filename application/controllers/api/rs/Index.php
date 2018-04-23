@@ -285,7 +285,45 @@ class Index extends REST_Controller{
         curl_close($ch);
     }
     
+    
+    public function base_post(){
 
+        if($this->input->get('empresaCnpj')){
+
+            $this->db->where('empresaCnpj',$this->input->get('empresaCnpj'));
+            $result = $this->db->get('empresas');
+            
+            if($result->num_rows() > 0 ){
+
+                $upload = $this->admin->uploadFile();
+                
+                if($upload){
+
+                    $this->response( $upload , 200);
+
+                }else{
+                    $this->response( [
+                        'status' => FALSE,
+                        'message' => 'Procedimento falhou'
+                    ] , 400);
+                }
+                
+            }else{
+
+                $this->response( [
+                    'status' => FALSE,
+                    'message' => 'Empresa inexistente'
+                ], 404);
+            }
+
+        }else{
+
+            $this->response( [
+                'status' => FALSE,
+                'message' => 'Especifique a empresa'
+            ], 400);
+        }
+    }
     public function empresas_get(){
 
         if($this->input->get('empresaId')){
