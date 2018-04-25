@@ -211,7 +211,7 @@ var model = {
 
     executePush: function(data){
 
-        var type = data.type
+        const type = data.type
         
         switch (type) {
             case 'switchStatus':
@@ -232,9 +232,12 @@ var model = {
 
 
     syncBD: function(){
-        
-        app.ajax('post','base?empresaCnpj='+localStorage.getItem('empresaCnpj'),'', function(res){
+        model.loading('open')
 
+        this.ajax('get','base?empresaCnpj='+localStorage.getItem('empresaCnpj'),'', function(res){
+
+            model.loading('close')
+            
             console.log(res)
         })
 

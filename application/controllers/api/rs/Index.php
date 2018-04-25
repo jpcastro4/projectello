@@ -350,32 +350,28 @@ class Index extends REST_Controller{
         if($this->input->get('empresaCnpj')){
 
             $this->db->where('empresaCnpj',$this->input->get('empresaCnpj'));
-            $result = $this->db->get('empresas');
+            $rs = $this->db->get('empresas');
 
-            if($result->num_rows() > 0 ){
+            if($rs->num_rows() > 0 ){
 
                 $path = base_url('base/'.$this->input->get('empresaCnpj').'/');
 
                 $base = array();
-
-                $representantes = file_exists($path.'representantes.json');
-                $clientes = file_exists($path.'clientes.json');
-                $produtos = file_exists($path.'produtos.json');
-                               
-                if($representantes){
+                 
+                if($rs->row()->representantes){
                     $base['representantes'] = json_decode(file_get_contents($path.'representantes.json'));
                 }
 
-                if($clientes){
+                if($rs->row()->clientes){
                     $base['clientes'] = json_decode(file_get_contents($path.'clientes.json'));
                 }
 
-                if($produtos){
+                if($rs->row()->produtos){
                     $base['produtos'] = json_decode(file_get_contents($path.'produtos.json'));
                 }
 
                 $this->response( [
-                    'content'=>$representantes,
+                    'content'=>$base,
                     'status' => TRUE,
                     'message' => 'Sincronizando base'
                 ], 200);

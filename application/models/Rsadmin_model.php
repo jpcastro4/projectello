@@ -292,6 +292,9 @@ class Rsadmin_model extends CI_Model{
         fclose($fp);
         
         if($write){
+
+            $this->db->where('empresaCnpj',$this->input->get('empresaCnpj'));
+            $this->db->update('empresas', array($filename=>1));
             return true;
         }else{
             return false;

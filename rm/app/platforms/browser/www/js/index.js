@@ -37,6 +37,8 @@ var app = {
 
             //inicliza de acordo com a plataforma
             if (device.platform == 'browser') {
+                localStorage.setItem('homologaStatus', 2)
+                localStorage.setItem('empresaCnpj','14926394000118')
 
                 deviceID = '711C3126-FF51-4B07-958B-FD30182BA043' //localStorage.setItem('deviceID', '711C3126-FF51-4B07-958B-FD30182BA043')
             }
