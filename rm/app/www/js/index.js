@@ -1,8 +1,8 @@
 
 var deviceDb = new PouchDB('Device');
-// var representantesDb = new PouchDB('Representantes');
-// var clientesDb = new PouchDB('Clientes');
-// var produtosDb = new PouchDB('Produtos');
+var representantesDb = new PouchDB('Representantes');
+var clientesDb = new PouchDB('Clientes');
+var produtosDb = new PouchDB('Produtos');
 
 var localDb = null
 var historico = []
@@ -111,6 +111,16 @@ var app = {
             model.homologa()   
         })
 
+        $('#form-login').on('submit', (e)=>{
+            e.preventDefault()
+            model.login()
+        })
+
+        $('#sair').on('click', (e)=>{
+            e.preventDefault()
+            model.sair()
+        })
+        
         $('#save-prod').on('click', function (e) {
             e.preventDefault()
             app.prodInsert()

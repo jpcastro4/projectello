@@ -6,7 +6,7 @@ var controller = {
         }
 
         if ($('.page#login').is(':visible')) {
-            //this.pageLogin()
+            this.pageLogin()
         }
 
         if ($('.page#pedidos').is(':visible')) {
@@ -46,17 +46,28 @@ var controller = {
             model.openPage('homologacao')
         }
 
-        
-   
     },
+
+    pageLogin: function(){
+
+        if (localStorage.getItem('user_log')){
+            model.openPage('pedidos')
+        }
+    },
+
+
     pagePedidos: function () {
 
         $('.tab-pedidos').tabs({
             swipeable: true
         })
 
-        $('.loading').hide()
+        model.openPage('pedidos')
+
+        model.loading('close')
     },
+
+
      
     sync: function(){
         model.openPage('sync',false,close)

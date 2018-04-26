@@ -73,22 +73,7 @@ var model = {
         }
 
     },
-    sair: () => {
-
-        if (typeof cordova !== 'undefined') {
-            if (navigator.app) {
-                navigator.app.exitApp()
-            }
-            else if (navigator.device) {
-                navigator.device.exitApp()
-            }
-        } else {
-            window.close();
-            $timeout(function () {
-                self.showCloseMessage = true
-            })
-        }
-    },  
+      
     sendLog: function (log) {
 
         $('.infopage .consolelog').html(log)
@@ -238,21 +223,70 @@ var model = {
 
             model.loading('close')
             
-            console.log(res)
+            if(res.error){
+                console.log('ERRO syncBD')
+            }
+            else{
+                //console.log(res)
+
+                if(res.content){
+                    db.initTables(res.content)
+                }
+            }
+            
         })
 
     },
 
+    login: ()=>{
+
+        model.loading('open')
+
+        var credenciais = $('#form-login').serializeJSON()
+        
+        db.login(credenciais, (rs)=>{
+             
+            if(rs.error){
+                model.loading('close')                
+                M.toast({ html: rs.message })
+            }else{
+                model.openPage('pedidos')
+            }
+        })
+
+    },
+    sair: () => {
+
+        // if (typeof cordova !== 'undefined') {
+        //     if (navigator.app) {
+        //         navigator.app.exitApp()
+        //     }
+        //     else if (navigator.device) {
+        //         navigator.device.exitApp()
+        //     }
+        // } else {
+        //     window.close();
+        //     $timeout(function () {
+        //         self.showCloseMessage = true
+        //     })
+        // }
+
+        if (localStorage.getItem('user_log')){
+            localStorage.setItem('user_log', null)
+            model.openPage('login')
+        }
+    },
+
+
+    pagePedidos: ()=>{
 
 
 
-
-
-
+    },
 
 
     //AREA DE PRODUTOS
-    pageProdutos: function () {
+    pageProdutos: ()=> {
 
         $('.loading').show()
         app.prodList()

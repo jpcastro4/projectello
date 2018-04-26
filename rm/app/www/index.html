@@ -62,7 +62,6 @@
         </div>
     </div>
     
-
     <div class="page animated" id="homologacao">
          
         <header class="navbar-fixed center-align app-head"> 
@@ -113,16 +112,16 @@
         </header>
 
         <div class="row ptop valign-wrapper">
-            <form class="col s12">
+            <form class="col s12" id="form-login">
             <div class="row">
                 <div class="input-field col s12">
-                    <input placeholder="Matricula/Cod Vendedor" id="codvendedor" type="text" class="validate">
+                    <input placeholder="Matricula/Cod Vendedor" id="codvendedor" class="validate" type="text" name="ID">
                     <label for="codvendedor">Matrícula/Cod Vendedor</label>
                 </div>
             </div>
             <div class="row">
                 <div class="input-field col s12">
-                    <input placeholder="Senha" id="senhavendedor" type="text" class="validate">
+                    <input placeholder="Senha" id="senhavendedor"  class="validate" type="password" name="SENHA">
                     <label for="senhavendedor">Senha</label>
                 </div>
             </div>
@@ -139,18 +138,17 @@
       
     </div>
     
-
     <div class="page animated hidden" id="pedidos">
         
         <header class="navbar-fixed center-align app-head">
             <nav class="bg-verde">
-                <i class="material-icons menu-icon left px-3">arrow_back</i>
+                <!-- <i class="material-icons menu-icon left px-3">arrow_back</i> -->
                 PEDIDOS
                 <i class="material-icons menu-icon right px-3 menu-login" data-target='menu-login'>more_vert</i>
     
                 <ul id='menu-login' class='dropdown-content'>
                     <li>
-                        <a href="#" data-target="homologacao" class="openPage">Homologar</a>
+                        <a href="#" id="sair">Homologar</a>
                     </li>
                 </ul>
     
@@ -427,7 +425,7 @@
         </header>
     
         <div class="row">
-                <div class="col s12 pt-2" id="lisa-produtos-pedido">
+            <div class="col s12 pt-2" id="lisa-produtos-pedido">
                     <!-- <div class="row mb-0 item">
                                     <div class="col s10">
                                         <div class="row mb-0 item-head">
@@ -454,10 +452,10 @@
                                     </div>
                                 
                                     <hr class="divisor col s12" tabindex="-1">
-                                </div> -->
+                                </div>
     
                     <div class="alert alert-info center-align">Adicione produtos ao pedido</div>
-                </div>
+                </div> -->
     
             </div>
             <div class="fixed-action-btn">
@@ -535,7 +533,7 @@
     
     <script type="text/javascript" src="includes/jquery.serializejson.js"></script> 
     
-    <!--<script type="text/javascript" src="js/db.js"></script>-->
+    <script type="text/javascript" src="js/db.js"></script>
      <script type="text/javascript" src="js/model.js"></script>
     <!--<script type="text/javascript" src="js/view.js"></script>-->
     <script type="text/javascript" src="js/controller.js"></script>
