@@ -17,11 +17,12 @@ var controller = {
             //this.pagePedido()
         }
 
-        if ($('.page#produtos').is(':visible')) {
-            this.pageProdutos()
-        }
+        if($('.page#clientes').is(':visible')){
 
-        
+        }
+        if ($('.page#produtos').is(':visible')) {
+            //this.pageProdutos()
+        }        
     },
     pageHomologacao: function(){
          
@@ -36,7 +37,9 @@ var controller = {
         if (localStorage.getItem('homologaStatus') == 2) {
             
             model.loading('close')
-            model.syncBD()
+            if (device.platform == 'browser') {
+                model.syncBD()
+            }
             model.openPage('login')
         }
 
@@ -48,13 +51,16 @@ var controller = {
 
     },
 
-    pageLogin: function(){
+    pageLogin: ()=>{
 
         if (localStorage.getItem('user_log')){
             model.openPage('pedidos')
+        }else{
+            model.openPage('login')
         }
     },
 
+    
 
     pagePedidos: function () {
 

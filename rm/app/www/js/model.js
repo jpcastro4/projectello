@@ -1,31 +1,32 @@
 var model = {
     
     // FUNCTIONS
-    ajax: function (type, action, data, callback) {
+    ajax: (type, action, data, callback)=>{
 
         $.ajax({
             type: type,
-            url: url + action,
+            url: ApiUrl + action,
             data: data,
             dataType: 'json',
             crossDomain: true,
-            success: function (data) {
+            success:  (data)=>{
                 return callback(data)
             },
-            error: function (data) {
+            error:  (data)=>{
                 return callback({ error: true, data: data })
             }
         })
+         
 
     },
-    connection: function () {
+    connection:  ()=>{
         console.log(navigator.onLine)
 
         var networkState = navigator.onLine
 
         return networkState
     },
-    openPage: function (page, back = false) {
+    openPage:  (page, back = false)=>{
 
         $('body').find('.page').addClass('hidden')
 
@@ -62,7 +63,7 @@ var model = {
 
         //init.modoSync()
     },
-    loading: function (action) {
+    loading:  (action)=>{
 
         if (action == 'open') {
             $('.loading').removeClass('hidden').show()
@@ -74,22 +75,36 @@ var model = {
 
     },
       
-    sendLog: function (log) {
+    sendLog:  (log)=>{
 
         $('.infopage .consolelog').html(log)
 
-        $.post(url + 'log', { message: log }, function (dt) {
+        $.post(url + 'log', { message: log },  (dt) =>{
 
             alert('Log enviado')
         })
 
     },
-    htmlLog: function(log){
+    htmlLog: (log)=>{
 
         $('.page').not('.hidden').append('<div class="">'+JSON.stringify(log)+'</div>')
     },
 
-    homologa: function () {
+    refreshToken:  ()=>{
+
+        this.ajax('post', 'device/?dispId=' + localStorage.getItem('dispId'), { deviceNotifReg: registrationID },  (res) =>{
+
+            if (res.error) {
+                console.log(res)
+                alert('Erro na autenticação')
+                M.toast({ html: 'Erro na autenticação Refresh' })
+            } else {
+                console.log(res.message)
+            }
+        })
+    },
+
+    homologa:  ()=>{
 
         model.loading('open')
 
@@ -112,7 +127,7 @@ var model = {
 
         var params = '/?deviceId=' + deviceID + '&empresaCnpj=' + dados.empresaCnpj
         
-        this.ajax('get', 'homologa'+params, '', function(res){
+        this.ajax('get', 'homologa'+params, '', (res)=>{
              
             if(res.error){
                 console.log(res.data)
@@ -130,15 +145,12 @@ var model = {
                 }else{
                     localStorage.setItem('homologaStatus',res.status)
                 }
-                
-                model.loading('close')
-
             }
         })     
 
     },   
 
-    execHomologa: function(){        
+    execHomologa: ()=>{ 
         model.loading('open') 
 
         M.toast({ html: 'Iniciando homologação' })
@@ -160,41 +172,26 @@ var model = {
         
         var post = { deviceId: deviceID, deviceNotifReg: localStorage.getItem('registrationId'), empresaCnpj: dados.empresaCnpj }
 
-            this.ajax('post','homologa',post , function(res){
+            this.ajax('post','homologa',post , (res)=>{
                 model.htmlLog(res)
                 if (res.error) {
 
                     console.log(res.data)     
                     
                     M.toast({ html: res.data.responseJSON.message })
-                    model.loading('close')
                         
                 } else {
                     console.log(res)
  
                     localStorage.setItem('dispId',res.dispId)
                     M.toast({ html: res.message })
-                    model.loading('close')
+  
                 }
 
             })
     },
 
-    refreshToken: function(){
-
-        this.ajax('post', 'device/?dispId=' + localStorage.getItem('dispId'), { deviceNotifReg : registrationID }, function(res){
-
-            if(res.error){
-                console.log(res)
-                alert('Erro na autenticação')
-                M.toast({ html: 'Erro na autenticação Refresh' })
-            }else{
-                console.log(res.message)
-            }
-        })
-    },
-
-    executePush: function(data){
+    executePush: (data)=>{
 
         const type = data.type
         
@@ -208,34 +205,32 @@ var model = {
         }
     },
 
-    switchStatus: function(data){
+    switchStatus: (data)=>{
 
         localStorage.setItem('homologaStatus', data.status)
-        controller.pageHomologacao()
 
+        if(data.status == 2){
+            model.syncBD()
+        }
+        model.openPage('homologacao')
     },
 
-
-    syncBD: function(){
+    syncBD: ()=>{
         model.loading('open')
 
-        this.ajax('get','base?empresaCnpj='+localStorage.getItem('empresaCnpj'),'', function(res){
-
-            model.loading('close')
+        model.ajax('get','base?empresaCnpj='+localStorage.getItem('empresaCnpj'),'', (res)=>{
             
             if(res.error){
                 console.log('ERRO syncBD')
             }
             else{
-                //console.log(res)
-
+                
                 if(res.content){
                     db.initTables(res.content)
+                    model.loading('close')
                 }
             }
-            
         })
-
     },
 
     login: ()=>{
@@ -277,10 +272,28 @@ var model = {
         }
     },
 
+    novoPedido: () => {
+
+        let pedido = {
+            pedidoId: $.now(),
+            representanteCod: localStorage.getItem('user_log'),
+        }
+
+        localStorage.setItem('pedido', pedido)
+        model.openPage('clientes')
+    },
+
+    addClientePedido: ()=>{
+
+    },
+
+    addProdutoPedido: ()=>{
+
+    },
 
     pagePedidos: ()=>{
 
-
+        model.loading('close')
 
     },
 

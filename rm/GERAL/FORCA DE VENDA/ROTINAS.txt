@@ -13,7 +13,7 @@ Se não existe
     Envia o CNPJ
     DeviceId
     RegistrationId    
-    cadastra o device com status 1
+    cadastra o device com status 0
 
 Se sim retorna o status
 
@@ -31,7 +31,7 @@ Recebe o Push de troca de status
 
     Se 3
     Insere status de inativo
-    Executa atualização
+    
 
     Se 4
     Insere status de bloqueado

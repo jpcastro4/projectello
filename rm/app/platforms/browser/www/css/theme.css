@@ -177,6 +177,9 @@ body, html{
 	background:#fff;
 }
 
+.font-branco{
+    color:#fff !important;
+}
 /* GLOBAL */
 
 .loading{

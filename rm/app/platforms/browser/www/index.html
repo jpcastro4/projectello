@@ -249,7 +249,7 @@
         </div>
 
         <div class="fixed-action-btn">
-            <a class="btn-floating btn-large red">
+            <a class="btn-floating btn-large red" id="novo-pedido">
                 <i class="large material-icons">add</i>
             </a>
         </div>
@@ -281,7 +281,7 @@
                         <div class="search-input col s12">
                             <div class="row mb-0 valign-wrapper">
                                 <div class="col s2">
-                                    <i class="material-icons prefix left">filter_list</i>
+                                    <i class="material-icons prefix left" id="open-filters">filter_list</i>
                                 </div>
                                 <div class="col s8 px-0">
                                     <input id="icon_prefix" placeholder="Busque o cliente" type="text" class="validate">
@@ -291,6 +291,28 @@
                                 </div>
                             </div>
     
+                        </div>
+                        <div class="row hidden" id="filters">
+                            <div class="col py-3">
+                                <p class="py-3">
+                                    <label class="font-branco">
+                                        <input name="filtro" type="radio" value="nome" class="white"/>
+                                        <span>Por nome</span>
+                                    </label>
+                                </p>
+                                <p class="py-3">
+                                    <label class="font-branco">
+                                        <input name="filtro" type="radio" value="cod" class="white"/>
+                                        <span>Por código</span>
+                                    </label>
+                                </p>
+                                <p class="py-3">
+                                    <label class="font-branco">
+                                        <input name="filtro" type="radio" value="cpf_cnpj" class="white"/>
+                                        <span>Por CPF ou CNPJ</span>
+                                    </label>
+                                </p>
+                            </div>
                         </div>
                     </form>
                 </div>

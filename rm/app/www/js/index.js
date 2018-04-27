@@ -1,15 +1,14 @@
 
-var deviceDb = new PouchDB('Device');
-var representantesDb = new PouchDB('Representantes');
-var clientesDb = new PouchDB('Clientes');
-var produtosDb = new PouchDB('Produtos');
+let deviceDb = new PouchDB('Device');
+let representantesDb = new PouchDB('Representantes');
+let clientesDb = new PouchDB('Clientes');
+let produtosDb = new PouchDB('Produtos');
 
-var localDb = null
-var historico = []
-var registrationID = null //localStorage.getItem('registrationId')
-var deviceID = null //localStorage.getItem('deviceID')
-//var url = 'https://ellobeta.com/api/rs/'
-var url = 'http://localhost/ellobeta/api/rs/'
+let localDb = null
+let historico = []
+let registrationID = null //localStorage.getItem('registrationId')
+let deviceID = null //localStorage.getItem('deviceID')
+let ApiUrl = ''
 
 //const pluralize = (count, noun, sSuffix = '', pSuffix = 's') => (count != 1) ? noun + pSuffix : noun + sSuffix
 
@@ -39,6 +38,7 @@ var app = {
             if (device.platform == 'browser') {
                 localStorage.setItem('homologaStatus', 2)
                 localStorage.setItem('empresaCnpj','14926394000118')
+                ApiUrl = 'http://localhost/ellobeta/api/rs/'
 
                 deviceID = '711C3126-FF51-4B07-958B-FD30182BA043' //localStorage.setItem('deviceID', '711C3126-FF51-4B07-958B-FD30182BA043')
             }
@@ -46,9 +46,8 @@ var app = {
             if (device.platform == 'Android') {
 
                 deviceID = device.uuid //localStorage.setItem('deviceID', device.uuid)
-                
+                ApiUrl = 'https://ellobeta.com/api/rs/'
             }
-
             
             app.setupPush();
             app.initializeEls()
@@ -114,6 +113,32 @@ var app = {
         $('#form-login').on('submit', (e)=>{
             e.preventDefault()
             model.login()
+        })
+
+        $('#novo-pedido').on('click', (e)=>{
+            e.preventDefault()
+            model.novoPedido()
+        })
+
+        $('#busca-cliente').on('click',()=>{
+
+            model.buscaCliente()
+        })
+
+        $('#open-filters').on('click', ()=>{
+            let filters = $('#filters')
+            if (filters.is(':visible')){
+                filters.addClass('hidden')
+            }else{
+                filters.removeClass('hidden')
+            }
+        })
+
+        $('.addCliente').on('click', ()=>{
+
+            const clienteId = $(this).data('clienteId')
+
+            model.addClientePedido()
         })
 
         $('#sair').on('click', (e)=>{

@@ -4,7 +4,6 @@
     "displayName": "Remote Sales",
     "cordova": {
         "platforms": [
-            "android",
             "browser"
         ],
         "plugins": {
@@ -18,7 +17,6 @@
         }
     },
     "dependencies": {
-        "cordova-android": "^6.2.3",
         "cordova-browser": "^4.1.0",
         "cordova-plugin-console": "~1.1.0",
         "cordova-plugin-device": "~2.0.1",
