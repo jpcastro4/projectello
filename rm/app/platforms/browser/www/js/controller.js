@@ -18,12 +18,13 @@ var controller = {
         }
 
         if($('.page#clientes').is(':visible')){
-
+            this.pageClientes()
         }
         if ($('.page#produtos').is(':visible')) {
             //this.pageProdutos()
         }        
     },
+
     pageHomologacao: function(){
          
         model.loading('open')
@@ -38,7 +39,7 @@ var controller = {
             
             model.loading('close')
             if (device.platform == 'browser') {
-                model.syncBD()
+                //model.syncBD()
             }
             model.openPage('login')
         }
@@ -48,29 +49,26 @@ var controller = {
             model.loading('close')
             model.openPage('homologacao')
         }
-
     },
 
     pageLogin: ()=>{
-
-        if (localStorage.getItem('user_log')){
+        
+        if (localStorage.getItem('user_log') != 'false'){  
             model.openPage('pedidos')
-        }else{
-            model.openPage('login')
-        }
+        } 
     },
 
-    
-
-    pagePedidos: function () {
+    pagePedidos: ()=>{
 
         $('.tab-pedidos').tabs({
             swipeable: true
         })
-
-        model.openPage('pedidos')
-
+        
         model.loading('close')
+    },
+
+    pageClientes: ()=>{
+        
     },
 
 

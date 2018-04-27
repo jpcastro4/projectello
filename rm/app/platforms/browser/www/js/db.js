@@ -86,7 +86,7 @@ var db = {
             
             if(doc.SENHA == dados.SENHA){
                 doc.SENHA = ''
-                localStorage.setItem('user_log',doc)
+                localStorage.setItem('user_log',JSON.stringify(doc))
                 return callback({error:false})
             }else{
                 return callback({ error: true, message: 'Senha incorreta' })
@@ -97,6 +97,22 @@ var db = {
 
             return callback({ error: true, message: err })
         });
+    },
+
+    getCliente: (params,callback)=>{
+
+         
+        clientesDb.search({
+            query: params.s,
+            fields: [params.filtro]
+        }).then(function (res) {
+            callback(res)
+        }).catch(function (err) {
+            callback(err)
+        })
+
+        
+
     },
 
     syncTbPesquisas: function(callback){

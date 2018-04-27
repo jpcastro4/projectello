@@ -104,7 +104,7 @@
 
                 <ul id='menu-login' class='dropdown-content'>
                     <li>
-                        <a href="#" data-target="homologacao" class="openPage">Homologar</a>
+                        <a href="#" data-target="homologacao" class="openPage">Trocar empresa</a>
                     </li>
                 </ul>
 
@@ -144,11 +144,11 @@
             <nav class="bg-verde">
                 <!-- <i class="material-icons menu-icon left px-3">arrow_back</i> -->
                 PEDIDOS
-                <i class="material-icons menu-icon right px-3 menu-login" data-target='menu-login'>more_vert</i>
+                <i class="material-icons menu-icon right px-3 menu-login" data-target='menu-pedidos'>more_vert</i>
     
-                <ul id='menu-login' class='dropdown-content'>
+                <ul id='menu-pedidos' class='dropdown-content'>
                     <li>
-                        <a href="#" id="sair">Homologar</a>
+                        <a href="#" id="sair">Sair</a>
                     </li>
                 </ul>
     
@@ -263,9 +263,9 @@
             <nav class="bg-verde">
                 <i class="material-icons menu-icon left px-3 openPage" data-target="pedidos">arrow_back</i>
                 CLIENTES
-                <i class="material-icons menu-icon right px-3 menu-login" data-target='menu-login'>more_vert</i>
+                <i class="material-icons menu-icon right px-3 menu-login" data-target='menu-clientes'>more_vert</i>
     
-                <ul id='menu-login' class='dropdown-content'>
+                <ul id='menu-clientes' class='dropdown-content'>
                     <li>
                         <a href="#" class="openPage">Homologar</a>
                     </li>
@@ -277,14 +277,14 @@
         <div class="row">
             <div class="row">
                 <div class="row mb-0 bg-verde font-branco">
-                    <form class="col p-2 s12">
+                    <form class="col p-2 s12" id="busca-cliente">
                         <div class="search-input col s12">
                             <div class="row mb-0 valign-wrapper">
                                 <div class="col s2">
                                     <i class="material-icons prefix left" id="open-filters">filter_list</i>
                                 </div>
                                 <div class="col s8 px-0">
-                                    <input id="icon_prefix" placeholder="Busque o cliente" type="text" class="validate">
+                                    <input id="icon_prefix" placeholder="Busque o cliente" name="s" type="text" class="validate">
                                 </div>
                                 <div class="col s2">
                                     <i class="material-icons prefix right">search</i>
@@ -292,23 +292,23 @@
                             </div>
     
                         </div>
-                        <div class="row hidden" id="filters">
+                        <div class="col s12 hidden teal lighten-5" id="filters">
                             <div class="col py-3">
                                 <p class="py-3">
-                                    <label class="font-branco">
-                                        <input name="filtro" type="radio" value="nome" class="white"/>
+                                    <label>
+                                        <input name="filtro" type="radio" value="NOME" checked/>
                                         <span>Por nome</span>
                                     </label>
                                 </p>
                                 <p class="py-3">
-                                    <label class="font-branco">
-                                        <input name="filtro" type="radio" value="cod" class="white"/>
+                                    <label>
+                                        <input name="filtro" type="radio" value="CODIGO"/>
                                         <span>Por código</span>
                                     </label>
                                 </p>
                                 <p class="py-3">
-                                    <label class="font-branco">
-                                        <input name="filtro" type="radio" value="cpf_cnpj" class="white"/>
+                                    <label>
+                                        <input name="filtro" type="radio" value="CNPJ_CPF"/>
                                         <span>Por CPF ou CNPJ</span>
                                     </label>
                                 </p>
@@ -360,9 +360,9 @@
             <nav class="bg-verde">
                 <i class="material-icons menu-icon left px-3 openPage" data-target="pedidos">arrow_back</i>
                 PRODUTOS
-                <i class="material-icons menu-icon right px-3 menu-login" data-target='menu-login'>more_vert</i>
+                <i class="material-icons menu-icon right px-3 menu-login" data-target='menu-produtos'>more_vert</i>
     
-                <ul id='menu-login' class='dropdown-content'>
+                <ul id='menu-produtos' class='dropdown-content'>
                     <li>
                         <a href="#" class="openPage">Homologar</a>
                     </li>
@@ -551,6 +551,7 @@
     <script src="includes/materialize/js/materialize.min.js"></script>
 
     <script type="text/javascript" src="includes/pouchdb-6.4.2.min.js"></script>
+    <script type="text/javascript" src="includes/pouchdb.quick-search.min.js"></script>
     <script type="text/javascript" src="includes/fastclick.min.js"></script>
     
     <script type="text/javascript" src="includes/jquery.serializejson.js"></script> 

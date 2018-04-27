@@ -239,10 +239,10 @@
                                                 <div class="label">Status</div>
                                                 
                                                 <select class="form-control dispStatus" data-dispositivo="<?php echo $device->dispId ?>">
-                                                    <option value="0" >Aguardando</option>
-                                                    <option value="1" <?php echo ($device->dispStatus == 1)? 'selected': ''  ?> >Ativo</option>
-                                                    <option value="2" <?php echo ($device->dispStatus == 2)? 'selected': ''  ?> >Inativo</option>
-                                                    <option value="3" <?php echo ($device->dispStatus == 3)? 'selected': ''  ?>>Bloqueado</option>
+                                                    <option value="1" <?php echo ($device->dispStatus == 1)? 'selected': ''  ?> >Aguardando</option>
+                                                    <option value="2" <?php echo ($device->dispStatus == 2)? 'selected': ''  ?> >Ativo</option>
+                                                    <option value="3" <?php echo ($device->dispStatus == 3)? 'selected': ''  ?> >Inativo</option>
+                                                    <option value="4" <?php echo ($device->dispStatus == 4)? 'selected': ''  ?> >Bloqueado</option>
                                                 </select>
                                             </div>
                                         </p>

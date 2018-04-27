@@ -143,24 +143,24 @@ var app = {
             }else{
 
                 var data = {
-                    title: 'Remote Sales',
+                    //title: 'Remote Sales',
                     type: 'switchStatus',
                     status: rs.dispStatus
                 }
 
-                if(rs.dispStatus == null ){
+                if(rs.dispStatus == 1 ){
                     data.message = 'Dispositivo aguardando'
-                }else if(rs.dispStatus == 1 ){
+                }else if(rs.dispStatus == 2 ){
                     data.message = 'Dispositivo liberado'
-                } else if (rs.dispStatus == 2) {
-                    data.message = 'Dispositivo inativo'
                 } else if (rs.dispStatus == 3) {
+                    data.message = 'Dispositivo inativo'
+                } else if (rs.dispStatus == 4) {
                     data.message = 'Dispositivo bloqueado'
                 }
                 
-                console.log('enviando push')
+                console.log(data)
                 
-                app.ajax('post', 'sendPush', { to: rs.dispNotifId, data: data }, function (res) {
+                app.ajax('post', 'sendPush', { to: rs.dispNotifId, data:data}, function (res) {
                     console.log(res)
 
                 })

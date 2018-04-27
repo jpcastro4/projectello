@@ -43,7 +43,7 @@ class Index extends REST_Controller{
 
             if($disp->num_rows() > 0){
 
-                if($disp->row()->dispStatus == 0 ){
+                if($disp->row()->dispStatus == 1 ){
 
                     $this->response( [
                         'result' => TRUE,
@@ -52,7 +52,7 @@ class Index extends REST_Controller{
                     ], 200);
                 }
 
-                if($disp->row()->dispStatus == 1 ){
+                if($disp->row()->dispStatus == 2 ){
 
                     $this->response( [
                         'result' => TRUE,
@@ -63,7 +63,7 @@ class Index extends REST_Controller{
                     ], 200);                    
                 }
 
-                if($disp->row()->dispStatus == 2 ){
+                if($disp->row()->dispStatus == 3 ){
 
                     $this->response( [
                         'result' => TRUE,
@@ -72,11 +72,11 @@ class Index extends REST_Controller{
                     ], 400);
                 }
                 
-                if($disp->row()->dispStatus == 3 ){
+                if($disp->row()->dispStatus == 4 ){
 
                     $this->response( [
                         'result' => FALSE,
-                        'status'=>5,
+                        'status'=>4,
                         'message' => 'Dispositivo bloqueado'
                     ], 400);
                 }
@@ -248,9 +248,7 @@ class Index extends REST_Controller{
         //     'priority'=>'high',
         //     'sound'=>true
         // );
-        
-        
-        
+    
 
         $base = array(
             'priority'=>'high',
@@ -288,7 +286,7 @@ class Index extends REST_Controller{
             ], 400);
         }else{
             $this->response([
-                'status' => TRUE,
+                'status' => $arrayToSend,
                 'message' => 'Push enviado'
             ], 200);
         }

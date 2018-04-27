@@ -1,11 +1,24 @@
 var model = {
+
+    ApiUrl: ()=>{
+
+        if (device.platform == 'browser') {
+            
+            return 'http://localhost/ellobeta/api/rs/'
+        }
+
+        if (device.platform == 'Android') {
+ 
+            return 'https://ellobeta.com/api/rs/'
+        }
+    },
     
     // FUNCTIONS
     ajax: (type, action, data, callback)=>{
 
         $.ajax({
             type: type,
-            url: ApiUrl + action,
+            url: model.ApiUrl() + action,
             data: data,
             dataType: 'json',
             crossDomain: true,
@@ -16,11 +29,10 @@ var model = {
                 return callback({ error: true, data: data })
             }
         })
-         
-
+        
     },
     connection:  ()=>{
-        console.log(navigator.onLine)
+        console.log(navigator)
 
         var networkState = navigator.onLine
 
@@ -31,6 +43,8 @@ var model = {
         $('body').find('.page').addClass('hidden')
 
         $('#' + page).removeClass('hidden')
+
+        controller.initPages()
 
         if (back) {
             //$('#' + page + ' .corpo').removeClass('slideInRight').addClass('slideInLeft')
@@ -92,10 +106,11 @@ var model = {
 
     refreshToken:  ()=>{
 
-        this.ajax('post', 'device/?dispId=' + localStorage.getItem('dispId'), { deviceNotifReg: registrationID },  (res) =>{
+        model.ajax('post', 'device/?dispId=' + localStorage.getItem('dispId'), { deviceNotifReg: registrationID },  (res) =>{
 
             if (res.error) {
                 console.log(res)
+                model.htmlLog(res)
                 alert('Erro na autenticação')
                 M.toast({ html: 'Erro na autenticação Refresh' })
             } else {
@@ -108,7 +123,7 @@ var model = {
 
         model.loading('open')
 
-        if (!this.connection()) {
+        if (!model.connection()) {
             
             M.toast({ html: 'Verifique a internet' })
             model.loading('close')
@@ -127,7 +142,7 @@ var model = {
 
         var params = '/?deviceId=' + deviceID + '&empresaCnpj=' + dados.empresaCnpj
         
-        this.ajax('get', 'homologa'+params, '', (res)=>{
+        model.ajax('get', 'homologa'+params, '', (res)=>{
              
             if(res.error){
                 console.log(res.data)
@@ -136,6 +151,7 @@ var model = {
                 if(res.data.status == 400 ){
                     localStorage.setItem('homologaStatus', res.data.responseJSON.status)
                 }
+                model.loading('close')
                                                 
             }else{
                 console.log(res )
@@ -145,6 +161,8 @@ var model = {
                 }else{
                     localStorage.setItem('homologaStatus',res.status)
                 }
+
+                model.loading('close')
             }
         })     
 
@@ -155,9 +173,9 @@ var model = {
 
         M.toast({ html: 'Iniciando homologação' })
 
-        console.log('Internet ' + this.connection())
+        console.log('Internet ' + model.connection())
 
-        if (!this.connection()) {
+        if (!model.connection()) {
 
             M.toast({ html: 'Verifique a internet' })
             model.loading('close')            
@@ -172,8 +190,8 @@ var model = {
         
         var post = { deviceId: deviceID, deviceNotifReg: localStorage.getItem('registrationId'), empresaCnpj: dados.empresaCnpj }
 
-            this.ajax('post','homologa',post , (res)=>{
-                model.htmlLog(res)
+            model.ajax('post','homologa',post , (res)=>{
+                 
                 if (res.error) {
 
                     console.log(res.data)     
@@ -193,7 +211,7 @@ var model = {
 
     executePush: (data)=>{
 
-        const type = data.type
+        const type = data.additionalData.type
         
         switch (type) {
             case 'switchStatus':
@@ -205,14 +223,20 @@ var model = {
         }
     },
 
-    switchStatus: (data)=>{
+    switchStatus: (data)=>{      
+        
+        localStorage.setItem('homologaStatus', data.additionalData.status)
 
-        localStorage.setItem('homologaStatus', data.status)
-
-        if(data.status == 2){
+        if (data.additionalData.status == 2){
             model.syncBD()
         }
-        model.openPage('homologacao')
+
+        if (data.additionalData.status != 2) {
+            model.sair()
+        }
+
+        M.toast({ html: data.message })
+        controller.pageHomologacao()
     },
 
     syncBD: ()=>{
@@ -221,7 +245,7 @@ var model = {
         model.ajax('get','base?empresaCnpj='+localStorage.getItem('empresaCnpj'),'', (res)=>{
             
             if(res.error){
-                console.log('ERRO syncBD')
+                alert('Erro sync DB')
             }
             else{
                 
@@ -242,11 +266,11 @@ var model = {
         db.login(credenciais, (rs)=>{
              
             if(rs.error){
-                model.loading('close')                
                 M.toast({ html: rs.message })
             }else{
                 model.openPage('pedidos')
             }
+
         })
 
     },
@@ -266,21 +290,38 @@ var model = {
         //     })
         // }
 
-        if (localStorage.getItem('user_log')){
-            localStorage.setItem('user_log', null)
-            model.openPage('login')
-        }
+        localStorage.setItem('user_log', false)
+        model.openPage('login')
     },
 
     novoPedido: () => {
-
         let pedido = {
             pedidoId: $.now(),
-            representanteCod: localStorage.getItem('user_log'),
+            representanteCod: JSON.parse(localStorage.getItem('user_log')),
         }
 
-        localStorage.setItem('pedido', pedido)
+        localStorage.setItem('pedido', JSON.stringify(pedido))
+
+        console.log(JSON.parse(localStorage.getItem('pedido')))
         model.openPage('clientes')
+    },
+
+    buscaCliente: ()=>{
+
+        model.loading('open')
+
+        let params = $('form#busca-cliente').serializeJSON()
+        
+        if ($('#filters').is(':visible')) {
+            $('#filters').addClass('hidden')
+        }
+
+        db.getCliente(params, (res)=>{
+
+            console.log(res)
+            model.loading('close')
+        })
+
     },
 
     addClientePedido: ()=>{
@@ -362,7 +403,7 @@ var model = {
 
 
         if (save) {
-            this.ajax('POST', action, data, function (res) {
+            model.ajax('POST', action, data, function (res) {
                 if (res.error) {
                     alert('Erro ao inserir')
                     $('.loading').hide()
@@ -415,7 +456,7 @@ var model = {
 
     getLocais: function (callback) {     
         
-        if (this.connection()) {
+        if (model.connection()) {
 
             return callback({ error: true, message: 'Verifique a internet' })
         }

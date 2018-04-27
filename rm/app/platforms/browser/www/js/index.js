@@ -8,7 +8,7 @@ let localDb = null
 let historico = []
 let registrationID = null //localStorage.getItem('registrationId')
 let deviceID = null //localStorage.getItem('deviceID')
-let ApiUrl = ''
+//let ApiUrl = ''
 
 //const pluralize = (count, noun, sSuffix = '', pSuffix = 's') => (count != 1) ? noun + pSuffix : noun + sSuffix
 
@@ -18,7 +18,9 @@ var app = {
     // APP CONSTRUCTOR
     bindEvents: function () {
         document.addEventListener('deviceready', this.onDeviceReady, false);
-        
+        document.addEventListener("online", function(){
+            console.log('CONECTADO')
+        }, false);
         //document.addEventListener("backbutton", this.onBackKeyDown, false);
     },
     initialize: function () {
@@ -28,17 +30,16 @@ var app = {
     },
     onDeviceReady: function () {
         //document.addEventListener("online", model.connection, false);
-       
         var attachFastClick = Origami.fastclick
         attachFastClick(document.body)
-        
+                
         if (device.available){
-
+            
             //inicliza de acordo com a plataforma
             if (device.platform == 'browser') {
                 localStorage.setItem('homologaStatus', 2)
                 localStorage.setItem('empresaCnpj','14926394000118')
-                ApiUrl = 'http://localhost/ellobeta/api/rs/'
+                //ApiUrl = 'http://localhost/ellobeta/api/rs/'
 
                 deviceID = '711C3126-FF51-4B07-958B-FD30182BA043' //localStorage.setItem('deviceID', '711C3126-FF51-4B07-958B-FD30182BA043')
             }
@@ -46,11 +47,12 @@ var app = {
             if (device.platform == 'Android') {
 
                 deviceID = device.uuid //localStorage.setItem('deviceID', device.uuid)
-                ApiUrl = 'https://ellobeta.com/api/rs/'
+                //ApiUrl = 'https://ellobeta.com/api/rs/'
             }
+
             
-            app.setupPush();
             app.initializeEls()
+            app.setupPush()
         }
         
 
@@ -115,13 +117,19 @@ var app = {
             model.login()
         })
 
+        $('#sair').on('click', (e) => {
+            e.preventDefault()
+            model.sair()
+        })
+
         $('#novo-pedido').on('click', (e)=>{
             e.preventDefault()
             model.novoPedido()
         })
 
-        $('#busca-cliente').on('click',()=>{
 
+        $('form#busca-cliente').on('submit',(e)=>{
+            e.preventDefault()
             model.buscaCliente()
         })
 
@@ -141,10 +149,7 @@ var app = {
             model.addClientePedido()
         })
 
-        $('#sair').on('click', (e)=>{
-            e.preventDefault()
-            model.sair()
-        })
+        
         
         $('#save-prod').on('click', function (e) {
             e.preventDefault()
@@ -169,7 +174,7 @@ var app = {
         })
     },
     setupPush: function () {
-        console.log('calling push init');
+        
         var push = PushNotification.init({
             "android": {
             },
@@ -181,8 +186,7 @@ var app = {
             },
             "windows": {}
         });
-        console.log('after init');
-
+        
         push.on('registration', function (data) {
             console.log('registration event: ' + data.registrationId);
 
@@ -201,6 +205,8 @@ var app = {
         });
 
         push.on('error', function (e) {
+            M.toast({ html: e.message})
+            alert(e.message)
             console.log("push error = " + e.message);
         });
 
